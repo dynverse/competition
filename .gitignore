@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 test_tmp
+.ipynb_checkpoints
+.vscode
