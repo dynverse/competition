@@ -48,8 +48,7 @@ time = (time .- minimum(time)) ./ (maximum(time) - minimum(time))
 milestone_network = DataFrame(
     from = "A",
     to = "B",
-    length = 1,
-    directed = true
+    length = 1
 )
 
 progressions = DataFrame(

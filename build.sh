@@ -30,3 +30,22 @@ TAG="dynverse/julia_example"
 
 chmod +x $FOLDER/main.jl
 docker build -t $TAG $FOLDER
+
+
+
+
+
+
+FOLDER="containers/convertors/output/"
+TAG="dynverse/convert_output"
+
+chmod +x $FOLDER/main.R
+docker build -t $TAG $FOLDER
+
+
+
+FOLDER="containers/evaluators/dyneval/"
+TAG="dynverse/dyneval"
+
+chmod +x $FOLDER/main.R
+docker build -t $TAG $FOLDER

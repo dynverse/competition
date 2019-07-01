@@ -39,6 +39,24 @@ The input data will be in an hdf5 format. This can be loaded within `r params$la
 cat_code("read_hdf5")
 ```
 
+## Biological background
+
+Cells are constantly changing based on external and internal stimuli. These can include:
+
+- Cell differentiation, a process where cells go from a more stem-cell like state to a specialized state
+- Cell division, a process where cells replicate their DNA and split into two new cells
+- Cell activate, a process where cells are activated by their environment and react to it
+
+There are several techniques to measure the current state of a cell. In this competition we focus on the mRNA state of a cell.
+
+## Problem description
+
+## Input format
+
+## Output format
+
+## Further reading
+
 You get as input two matrices: the counts and expression. These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows).
 
 Because the data is very sparse, the matrices are stored in a sparse format: [Compressed sparse column format (CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_(CSC_or_CCS)).

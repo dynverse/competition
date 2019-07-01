@@ -48,29 +48,15 @@ time <- (time - min(time)) / (max(time) - min(time))
 milestone_network <- tibble::tibble(
   from = "A",
   to = "B",
-  length = 1,
-  directed = TRUE
+  length = 1
 )
 progressions <- tibble::tibble(
   from = "A",
   to = "B",
   cell_id = names(time),
-  percentage = scale(time)
+  percentage = time
 )
-cell_ids = names(time)
 
 # Save output -------------------------------------------------------------
 write.csv(progressions, paste0(output_folder, "progressions.csv"), row.names = FALSE)
 write.csv(milestone_network, paste0(output_folder, "milestone_network.csv"), row.names = FALSE)
-write.csv(cell_ids, paste0(output_folder, "cell_ids.csv"), row.names = FALSE)
-#
-# library(hdf5r)
-# file.remove("output2.h5")
-# output2 <- H5File$new("output2.h5")
-# output2[["milestone_network"]] <- as.list(milestone_network)
-# output2[["progressions"]] <- progressions
-# output2[["cell_ids"]] <- cell_ids
-#
-#
-#
-# milestone_network

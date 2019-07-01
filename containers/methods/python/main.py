@@ -45,8 +45,7 @@ time = (time - time.min()) / (time.max() - time.min())
 milestone_network = pd.DataFrame({
   "from": ["A"],
   "to": ["B"],
-  "length": [1],
-  "directed": [True]
+  "length": [1]
 })
 
 progressions = pd.DataFrame({
