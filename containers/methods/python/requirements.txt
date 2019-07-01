@@ -1,6 +1,6 @@
+Cython
 numpy
 pandas
 scipy
-statsmodels
 sklearn
 h5py
