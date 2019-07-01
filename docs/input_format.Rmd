@@ -1,0 +1,52 @@
+---
+title: "Input and output description"
+output: html_document
+params:
+  language: R
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(hdf5r)
+library(DiagrammeR)
+
+codes <- list(
+  read_hdf5 = list(
+    R = 'dataset <- hdf5r::H5File$new("dataset.h5")',
+    python = ''
+  ),
+  read_sparsematrix = list(
+    R = '',
+    python = ''
+  )
+)
+
+cat_code <- function(id, language = params$language) {
+  knitr::asis_output(codes[[id]][[language]])
+}
+```
+
+```{bash}
+# generate example dataset if not present
+if [ ! -f data/dataset.h5 ]; then
+    docker run dynverse/dyntoy --output_dataset data/dataset.h5 --model tree
+fi
+```
+
+The input data will be in an hdf5 format. This can be loaded within `r params$language` using
+
+```{r}
+cat_code("read_hdf5")
+```
+
+You get as input two matrices: the counts and expression. These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows).
+
+Because the data is very sparse, the matrices are stored in a sparse format: [Compressed sparse column format (CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_(CSC_or_CCS)).
+
+They can be accessed within `r params$language` using
+
+```{r}
+cat_code("read_sparsematrix")
+```
+
+
