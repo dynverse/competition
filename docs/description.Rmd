@@ -139,8 +139,8 @@ examples %>%
   mutate(
     show_Example = str_glue("[{language}]({folder})"),
     show_Dockerfile = str_glue("[Dockerfile]({folder}/Dockerfile)"),
-    show_Input = str_glue("[{main_filename}#{input_line}]({main}#{input_line})"),
-    show_Onput = str_glue("[{main_filename}#{output_line}]({main}#{output_line})")
+    show_Input = str_glue("[{main_filename}#{input_line}]({main}#L{input_line})"),
+    show_Onput = str_glue("[{main_filename}#{output_line}]({main}#L{output_line})")
   ) %>% 
   select(matches("show_")) %>% 
   rename_all(~substr(., 6, 9999)) %>% 

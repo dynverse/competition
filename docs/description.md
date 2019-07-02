@@ -51,11 +51,11 @@ To get started, check out the examples we provided for different
 programming
 languages:
 
-| Example                                | Dockerfile                                            | Input                                                | Onput                                                  |
-| :------------------------------------- | :---------------------------------------------------- | :--------------------------------------------------- | :----------------------------------------------------- |
-| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#5)        | [main.R\#52](../containers/methods/r/main.R#52)        |
-| [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#9) | [main.py\#51](../containers/methods/python/main.py#51) |
-| [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#9)  | [main.jl\#58](../containers/methods/julia/main.jl#58)  |
+| Example                                | Dockerfile                                            | Input                                                 | Onput                                                   |
+| :------------------------------------- | :---------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------ |
+| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#L5)        | [main.R\#52](../containers/methods/r/main.R#L52)        |
+| [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#L9) | [main.py\#51](../containers/methods/python/main.py#L51) |
+| [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#L9)  | [main.jl\#58](../containers/methods/julia/main.jl#L58)  |
 
 You have to write a docker container that reads in two command-line
 arguments, the first contains the location of an input file, and the
