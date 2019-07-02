@@ -12,9 +12,6 @@ import pandas as pd
 dataset_location = sys.argv[1]
 output_folder = sys.argv[2]
 
-# dataset_location = "test_tmp/dataset.h5"
-# output_folder = "test_tmp/output/"
-
 print(dataset_location)
 print(output_folder)
 
