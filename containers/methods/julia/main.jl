@@ -13,9 +13,6 @@ using CSV
 dataset_location = ARGS[1]
 output_folder = ARGS[2]
 
-println(dataset_location)
-println(output_folder)
-
 # read in sparse matrix
 data = h5open(dataset_location, "r")
 expression_h5 = read(data["data"]["expression"])
@@ -35,7 +32,7 @@ cell_ids = expression_h5["rownames"]
 
 # Infer a trajectory ------------------------------------------------------
 
-# do a pca
+# do pca
 pca = fit(KernelPCA, expression; maxoutdim=1)
 pca_transformed = transform(pca, expression)
 

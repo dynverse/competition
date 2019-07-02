@@ -9,13 +9,6 @@ params <- commandArgs(trailingOnly = TRUE)
 dataset_location <- params[1]
 output_folder <- params[2]
 
-print(dataset_location)
-print(output_folder)
-
-#' @examples
-#' dataset_location <- "test_tmp/dataset.h5"
-#' output_folder <- "test_tmp"
-
 # read in sparse matrix
 
 dataset_h5 <- H5File$new(dataset_location)
@@ -35,8 +28,7 @@ expression <- Matrix::sparseMatrix(
 
 # Infer a trajectory ------------------------------------------------------
 
-# do a pca
-
+# do pca
 pca <- prcomp(expression)
 
 # select first principal component to construct a linear trajectory

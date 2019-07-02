@@ -12,9 +12,6 @@ import pandas as pd
 dataset_location = sys.argv[1]
 output_folder = sys.argv[2]
 
-print(dataset_location)
-print(output_folder)
-
 # read in sparse matrix
 dataset_h5 = h5py.File(dataset_location)
 expression_h5 = dataset_h5["data"]["expression"]
@@ -28,8 +25,7 @@ cell_ids = expression_h5["rownames"][()].astype(str)
 
 # Infer a trajectory ------------------------------------------------------
 
-# do a pca
-
+# do pca
 pca = sklearn.decomposition.TruncatedSVD()
 pca_transformed = pca.fit_transform(expression)
 
