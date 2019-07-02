@@ -53,13 +53,16 @@ languages:
 
 | Example                                | Dockerfile                                            | Input                                                 | Onput                                                   |
 | :------------------------------------- | :---------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------ |
-| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#L5)        | [main.R\#52](../containers/methods/r/main.R#L52)        |
+| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#L5)        | [main.R\#51](../containers/methods/r/main.R#L51)        |
 | [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#L9) | [main.py\#51](../containers/methods/python/main.py#L51) |
 | [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#L9)  | [main.jl\#58](../containers/methods/julia/main.jl#L58)  |
 
 You have to write a docker container that reads in two command-line
 arguments, the first contains the location of an input file, and the
-second the location of the output folder, within the container.
+second the location of the output folder, within the container. Examples
+of Dockerfile are provided for [R](../containers/methods/r/Dockerfile),
+[Python](../containers/methods/python/Dockerfile) and
+[Julia](../containers/methods/julia/Dockerfile)
 
 The input file is an HDF5 file, which contains two matrices: the counts
 (the raw data matrix) and expression (a log normalized derivation of the
@@ -75,15 +78,15 @@ We provided an example to read in these matrices for
 [Python](../containers/methods/python/main.py#9) and
 [Julia](../containers/methods/julia/main.jl#9)
 
-As output you have to provide two files. The milestone network is a
-table containing how milestones are connected (*from* and *to*) and the
-lengths of these connections (*length*). The progressions contains for
-each cell (*cell\_id*) where it is located along this topology (*from*,
-*to* and *percentage* ∈ \[0, 1\]). Each cell can only be present on one
-edge. Both outputs have to be saved as a comma separated file without an
-index but with header. Example csv files are present in the [examples
-output folder](../examples/output) (*progressions.csv* and
-*milestone\_network.csv*).
+As output you have to provide two files. The *milestone\_network.csv* is
+a table containing how milestones are connected (*from* and *to*) and
+the lengths of these connections (*length*). The *progressions.csv*
+contains for each cell (*cell\_id*) where it is located along this
+topology (*from*, *to* and *percentage* ∈ \[0, 1\]). Each cell can only
+be present on one edge. Both outputs have to be saved as a comma
+separated file without an index but with header. Example csv files are
+present in the [examples output folder](../examples/output)
+(*progressions.csv* and *milestone\_network.csv*).
 
 We provided an example to save these two objects for
 [R](../containers/methods/r/main.R#5),
