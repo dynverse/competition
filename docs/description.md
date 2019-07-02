@@ -10,15 +10,14 @@ These can include:
     like state to a specialized state
   - Cell division, a process where cells replicate their DNA and split
     into two new cells
-  - Cell activate, a process where cells are activated by their
+  - Cell activation, a process where cells are activated by their
     environment and react to it
 
 There are several techniques to measure the current state of a cell. In
-this competition we focus on the activity of protein coding genes with a
-cell, which can be analyzed with *single-cell RNA-seq* technologies. In
-the recent years these techniques have scaled up to being able to assess
-the expression (i.e. activity) of thousands of genes within tens of
-thousands of cells.
+this competition we focus on the transcriptome of a cell, which can be
+analyzed with *single-cell RNA-seq* technologies. In the recent years
+these techniques have scaled up to being able to assess the expression
+(i.e. activity) of thousands of genes within tens of thousands of cells.
 
 The state of a cell often changes gradually, and so does its
 transcriptome. If you profile different cells that are all at different
@@ -45,7 +44,17 @@ correct locations along this topology.
 
 ![](img/input_output.png)
 
-## Input and output format
+The topology is a graph structure, in this context called the milestone
+network as it connects “milestones” that cells pass through. Each edge
+within the milestone network can only be present once, and every edge
+has an associated length, which indicates how much the gene expression
+has changed between two milestones.
+
+The cells are placed at a particular position of this milestone network.
+We represent this as “progressions”, where each cell is assigned to an
+edge and a percentage indicating how far it has progressed in that edge.
+
+### Quick start
 
 To get started, check out the examples we provided for different
 programming
@@ -57,36 +66,44 @@ languages:
 | [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#L9) | [main.py\#51](../containers/methods/python/main.py#L51) |
 | [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#L9)  | [main.jl\#58](../containers/methods/julia/main.jl#L58)  |
 
+### Detailed description
+
 You have to write a docker container that reads in two command-line
-arguments, the first contains the location of an input file, and the
+arguments: the first contains the location of an input file, and the
 second the location of the output folder, within the container. Examples
 of Dockerfile are provided for [R](../containers/methods/r/Dockerfile),
 [Python](../containers/methods/python/Dockerfile) and
-[Julia](../containers/methods/julia/Dockerfile)
+[Julia](../containers/methods/julia/Dockerfile). Make sure to specify an
+entrypoint that will read in the two parameters using the JSON notation
+as is shown in the examples.
 
 The input file is an HDF5 file, which contains two matrices: the counts
-(the raw data matrix) and expression (a log normalized derivation of the
-counts). These matrices contain the expression of genes (columns) within
-hundreds to millions of cells (rows). Example HDF5 files are present in
-the [examples input folder](../examples/input) (*dataset.h5*).
+(`/data/counts`) and expression (`/data/expression`). These matrices
+contain the expression of genes (columns) within hundreds to millions of
+cells (rows). Example HDF5 files are present in the [examples input
+folder](../examples/input) (*dataset.h5*).
 
 Because the data is very sparse, the matrices are stored inside a sparse
 format: [Compressed sparse column format
-(CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_\(CSC_or_CCS\)).
+(CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html).
 We provided an example to read in these matrices for
 [R](../containers/methods/r/main.R#5),
 [Python](../containers/methods/python/main.py#9) and
-[Julia](../containers/methods/julia/main.jl#9)
+[Julia](../containers/methods/julia/main.jl#9) . This format stores
+three sparse array, *i*, *p* and *x*. *x* contains the actual values,
+*i* contains the row index for each value, and *p* contains which of the
+elements of *i* and *x* are in each column (i.e. *p*<sub><i>j</i></sub>
+until *p*<sub><i>j+1</i></sub> are the values in column *j*).
 
 As output you have to provide two files. The *milestone\_network.csv* is
 a table containing how milestones are connected (*from* and *to*) and
 the lengths of these connections (*length*). The *progressions.csv*
 contains for each cell (*cell\_id*) where it is located along this
-topology (*from*, *to* and *percentage* ∈ \[0, 1\]). Each cell can only
-be present on one edge. Both outputs have to be saved as a comma
-separated file without an index but with header. Example csv files are
-present in the [examples output folder](../examples/output)
-(*progressions.csv* and *milestone\_network.csv*).
+topology (*from*, *to* and *percentage* ∈ \[0, 1\]). Both outputs have
+to be saved as a comma separated file without an index but with header.
+Example csv files are present in the [examples output
+folder](../examples/output) (*progressions.csv* and
+*milestone\_network.csv*).
 
 We provided an example to save these two objects for
 [R](../containers/methods/r/main.R#5),
@@ -97,7 +114,8 @@ We provided an example to save these two objects for
 
 Your output will be compared to the known (or expected) trajectory
 within both synthetic and real data. This is done using four metrics, as
-described in (Saelens et al. 2019):
+described in [(Saelens et
+al. 2019)](https://doi.org/10.1038/s41587-019-0071-9):
 
   - Similarity between the topology
   - Similarity between the position of cells on particular branches

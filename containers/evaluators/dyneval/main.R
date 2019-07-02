@@ -29,6 +29,7 @@ model <- dynutils::read_h5(parsed_args$model)
 metrics <- strsplit(parsed_args$metrics, ",")[[1]]
 
 scores <- dyneval::calculate_metrics(goldstandard, model, metrics = metrics)
+scores <- scores[metrics]
 
 # write output
 jsonlite::write_json(scores, parsed_args$output_scores)

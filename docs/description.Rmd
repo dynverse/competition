@@ -64,13 +64,15 @@ Cells are constantly changing based on external and internal stimuli. These can 
 
 - Cell differentiation, a process where cells go from a more stem-cell like state to a specialized state
 - Cell division, a process where cells replicate their DNA and split into two new cells
-- Cell activate, a process where cells are activated by their environment and react to it
+- Cell activation, a process where cells are activated by their environment and react to it
 
-There are several techniques to measure the current state of a cell. In this competition we focus on the activity of protein coding genes with a cell, which can be analyzed with _single-cell RNA-seq_ technologies. In the recent years these techniques have scaled up to being able to assess the expression (i.e. activity) of thousands of genes within tens of thousands of cells.
+There are several techniques to measure the current state of a cell. In this competition we focus on the transcriptome of a cell, which can be analyzed with _single-cell RNA-seq_ technologies. In the recent years these techniques have scaled up to being able to assess the expression (i.e. activity) of thousands of genes within tens of thousands of cells.
 
 The state of a cell often changes gradually, and so does its transcriptome. If you profile different cells that are all at different stages, you can reconstruct the paths that cells take. These paths are called trajectories, and the methods that infers them from single-cell data are called trajectory inference (TI) methods. An example of such a trajectory is given below, visualized on a 2D dimensionality reduction of a single-cell expression dataset.
 
 ```{r, echo = FALSE, fig.width=10, message=FALSE}
+set.seed(1)
+
 dataset <- dynplot2::example_bifurcating %>% 
   add_dimred(dyndimred::dimred_landmark_mds)
 
@@ -83,7 +85,7 @@ theme <- theme(
 plot_dataset <- dataset %>% 
   dynplot() +
   geom_cell_point() +
-  labs(caption = "A small single-cell dataset visualized \nin two dimensions using MDS") +
+  labs(caption = "A small single-cell dataset visualized \nin two dimensions using multi-dimensional scaling. Each dot represents one cell.") +
   theme
 plot_trajectory <- dataset %>% 
   dynplot() +
@@ -91,7 +93,7 @@ plot_trajectory <- dataset %>%
   geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
   geom_milestone_label(aes(fill = milestone_id)) +
   scale_milestones_fillcolour() +
-  labs(caption = "A trajectory inferred from the data, \nwith four milestones (M1, M2, M3 and M4) \nand a bifurcation point at M3") +
+  labs(caption = "A trajectory inferred from the data, \nwith four milestones (M1, M2, M3 and M4) \nand a bifurcation point at M3.") +
   theme
 
 patchwork::wrap_plots(
@@ -130,7 +132,11 @@ You are given the expression of thousands of genes within thousands of cells. Th
 
 ![](img/input_output.png)
 
-## Input and output format
+The topology is a graph structure, in this context called the milestone network as it connects "milestones" that cells pass through. Each edge within the milestone network can only be present once, and every edge has an associated length, which indicates how much the gene expression has changed between two milestones.
+
+The cells are placed at a particular position of this milestone network. We represent this as "progressions", where each cell is assigned to an edge and a percentage indicating how far it has progressed in that edge.
+
+### Quick start
 
 To get started, check out the examples we provided for different programming languages:
 
@@ -147,19 +153,25 @@ examples %>%
   knitr::kable()
 ```
 
-You have to write a docker container that reads in two command-line arguments, the first contains the location of an input file, and the second the location of the output folder, within the container. Examples of Dockerfile are provided for `r examples %>% mutate(link_input = str_glue("[{language}]({folder}/Dockerfile)")) %>% pull(link_input) %>% label_sentence()`
+### Detailed description
 
-The input file is an HDF5 file, which contains two matrices: the counts (the raw data matrix) and expression (a log normalized derivation of the counts). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples input folder](../examples/input) (_dataset.h5_).
+You have to write a docker container that reads in two command-line arguments: the first contains the location of an input file, and the second the location of the output folder, within the container. Examples of Dockerfile are provided for `r examples %>% mutate(link_input = str_glue("[{language}]({folder}/Dockerfile)")) %>% pull(link_input) %>% label_sentence()`. Make sure to specify an entrypoint that will read in the two parameters using the JSON notation as is shown in the examples.
 
-Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_(CSC_or_CCS)). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()`
+```{r, echo = FALSE}
+# read_lines(paste0(examples %>% filter(language == "Python") %>% pull(folder), "/Dockerfile")) %>% c("```python", ., "```") %>% paste0(collapse = "\n") %>% knitr::asis_output()
+```
 
-As output you have to provide two files. The _milestone\_network.csv_ is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The _progressions.csv_ contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Each cell can only be present on one edge. Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples output folder](../examples/output) (_progressions.csv_ and _milestone\_network.csv_).
+The input file is an HDF5 file, which contains two matrices: the counts (`/data/counts`) and expression (`/data/expression`). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples input folder](../examples/input) (_dataset.h5_).
+
+Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()` . This format stores three sparse array, _i_, _p_ and _x_. _x_ contains the actual values, _i_ contains the row index for each value, and _p_ contains which of the elements of _i_ and _x_ are in each column (i.e. _p_<sub><i>j</i></sub> until _p_<sub><i>j+1</i></sub> are the values in column _j_).
+
+As output you have to provide two files. The _milestone\_network.csv_ is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The _progressions.csv_ contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples output folder](../examples/output) (_progressions.csv_ and _milestone\_network.csv_).
 
 We provided an example to save these two objects for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()`
 
 ## Evaluation
 
-Your output will be compared to the known (or expected) trajectory within both synthetic and real data. This is done using four metrics, as described in [@Saelens_Cannoodt_Todorov_Saeys_2019]:
+Your output will be compared to the known (or expected) trajectory within both synthetic and real data. This is done using four metrics, as described in [[@Saelens_Cannoodt_Todorov_Saeys_2019]](https://doi.org/10.1038/s41587-019-0071-9):
 
 - Similarity between the topology
 - Similarity between the position of cells on particular branches

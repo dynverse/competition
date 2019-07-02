@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-test_tmp
 .ipynb_checkpoints
 .vscode
+test_tmp
+results
