@@ -4,39 +4,30 @@ mkdir examples
 # input
 
 mkdir examples/input/
+mkdir examples/input/groundtruth/
 
 INPUT_FOLDER=$(pwd)/examples/input/
 MOUNT=/ti
 
-EXAMPLE_ID=linear
-mkdir $INPUT_FOLDER/$EXAMPLE_ID
-docker run -v $INPUT_FOLDER/$EXAMPLE_ID:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID
+create_example() {
+  docker run -v $INPUT_FOLDER:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID --output_goldstandard groundtruth/$EXAMPLE_ID.h5 --output_dataset $EXAMPLE_ID.h5
+}
 
-
-EXAMPLE_ID=bifurcating
-mkdir $INPUT_FOLDER/$EXAMPLE_ID
-docker run -v $INPUT_FOLDER/$EXAMPLE_ID:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID
-
-
-EXAMPLE_ID=tree
-mkdir $INPUT_FOLDER/$EXAMPLE_ID
-docker run -v $INPUT_FOLDER/$EXAMPLE_ID:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID
-
-
-EXAMPLE_ID=disconnected
-mkdir $INPUT_FOLDER/$EXAMPLE_ID
-docker run -v $INPUT_FOLDER/$EXAMPLE_ID:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID
+EXAMPLE_ID=linear create_example
+EXAMPLE_ID=bifurcating create_example
+EXAMPLE_ID=tree create_example
+EXAMPLE_ID=disconnected create_example
 
 # output
 mkdir examples/output/
 
 create_output() {
   mkdir $OUTPUT_FOLDER/$EXAMPLE_ID
-  docker run -v $INPUT_FOLDER/$EXAMPLE_ID/:$MOUNT_INPUT \
+  docker run -v $INPUT_FOLDER/:$MOUNT_INPUT \
     -v $OUTPUT_FOLDER/$EXAMPLE_ID/:$MOUNT_OUTPUT \
     -w $MOUNT \
     dynverse/r_example \
-    $MOUNT_INPUT/dataset.h5 $MOUNT_OUTPUT/
+    $MOUNT_INPUT/$EXAMPLE_ID.h5 $MOUNT_OUTPUT/
 }
 
 OUTPUT_FOLDER=$(pwd)/examples/output/

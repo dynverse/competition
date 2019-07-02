@@ -1,23 +1,24 @@
 rm -rf test_tmp
 mkdir test_tmp
 
-cd test_tmp
-
-LOCAL=$(pwd)
+LOCAL=$(pwd)/test_tmp/
 MOUNT=/ti
 
 docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/dyntoy --model linear
 
 
-mkdir $OUTPUT_FOLDER/output_r
-docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/r_example $MOUNT/dataset2.h5 $MOUNT/output_r/
-docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/convert_output --dataset $MOUNT/dataset.h5 --output_folder $MOUNT/output_r/ --model $MOUNT/model_r.h5
+mkdir $LOCAL/output_r
+docker run -v $LOCAL:$MOUNT dynverse/r_example $MOUNT/dataset.h5 $MOUNT/output_r/
+docker run -v $LOCAL:$MOUNT dynverse/convert_output --dataset $MOUNT/dataset.h5 --output_folder $MOUNT/output_r/ --model $MOUNT/model_r.h5
 
-mkdir $OUTPUT_FOLDER/output_python
-docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/python_example $MOUNT/dataset2.h5 $MOUNT/output_python/
+docker run -v $LOCAL:$MOUNT dynverse/ti_slingshot
+
+
+mkdir $LOCAL/output_python
+docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/python_example $MOUNT/dataset.h5 $MOUNT/output_python/
 docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/convert_output --dataset $MOUNT/dataset.h5 --output_folder $MOUNT/output_python/ --model $MOUNT/model_python.h5
 
-mkdir $OUTPUT_FOLDER/output_julia
+mkdir $LOCAL/output_julia
 docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/julia_example $MOUNT/dataset.h5 $MOUNT/output_julia/
 docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/convert_output --dataset $MOUNT/dataset.h5 --output_folder $MOUNT/output_julia/ --model $MOUNT/model_julia.h5
 

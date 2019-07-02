@@ -9,8 +9,8 @@ parser <-
   add_option("--model", type = "character", help = "The model, such as linear, bifurcating or tree", default = "linear") %>%
   add_option("--num_cells", type = "integer", help = "Number of cells", default = 200) %>%
   add_option("--num_features", type = "integer", help = "Number of features (genes)", default = 100) %>%
-  add_option("--output_goldstandard", type = "character", help = "Filename for the goldstandard, example: $MOUNT/dataset.(h5|loom). Will be a json file containing the scores.", default = "goldstandard.h5") %>%
-  add_option("--output_dataset", type = "character", help = "Filename for the dataset, example: $MOUNT/dataset.(h5|loom). Will be a json file containing the scores.", default = "dataset.h5")
+  add_option("--output_goldstandard", type = "character", help = "Filename for the goldstandard, example: $MOUNT/dataset.h5. Will be a json file containing the scores.", default = "goldstandard.h5") %>%
+  add_option("--output_dataset", type = "character", help = "Filename for the dataset, example: $MOUNT/dataset.h5. Will be a json file containing the scores.", default = "dataset.h5")
 
 parsed_args <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
 
