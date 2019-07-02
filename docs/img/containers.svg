@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="375.15842mm"
-   height="39.524967mm"
-   viewBox="0 0 375.15842 39.524967"
+   width="406.26587mm"
+   height="39.697186mm"
+   viewBox="0 0 406.26587 39.697185"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
@@ -165,8 +165,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="626.40515"
-     inkscape:cy="76.483142"
+     inkscape:cx="433.79902"
+     inkscape:cy="73.542647"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -175,9 +175,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1920"
-     inkscape:window-height="983"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-height="1043"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -195,7 +195,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-17.714374,-11.25)">
+     transform="translate(13.393062,-11.25)">
     <rect
        style="opacity:1;fill:#e2e2e2;fill-opacity:1;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect815-6"
@@ -235,14 +235,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:6.18783951px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="23.609562"
+       x="10.380393"
        y="22.651537"
        id="text819-3"><tspan
          sodipodi:role="line"
          id="tspan817-6"
-         x="23.609562"
+         x="10.380393"
          y="22.651537"
-         style="stroke-width:0.26458332">dataset.h5</tspan></text>
+         style="stroke-width:0.26458332">my_dataset.h5</tspan></text>
     <path
        style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.69999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Mend);paint-order:normal"
        d="M 58.586309,20.699404 H 74.839285"
@@ -251,14 +251,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:6.18783951px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="17.372955"
+       x="-13.734481"
        y="49.487846"
        id="text819-3-7"><tspan
          sodipodi:role="line"
          id="tspan817-6-5"
-         x="17.372955"
+         x="-13.734481"
          y="49.487846"
-         style="stroke-width:0.26458332">goldstandard.h5</tspan></text>
+         style="stroke-width:0.26458332">groundtruth/my_dataset.h5</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:6.18783951px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"

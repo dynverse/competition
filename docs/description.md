@@ -139,7 +139,7 @@ containers. An example of this is provided in
 additional docker containers that are distributed through docker hub: a
 convertor to convert the output to the format used by the
 [dynverse](https://dynverse.org) R packages, and an evaluator that reads
-in the output file together with the *goldstandard.h5* file to produce
+in the output file together with the ground truth HDF5 file to produce
 scores.
 
 ![](img/containers.png)
@@ -150,11 +150,10 @@ scores.
 
 <div id="ref-Saelens_Cannoodt_Todorov_Saeys_2019">
 
-Wouter Saelens\*, Robrecht Cannoodt\*, Helena Todorov, and Yvan Saeys.
+Saelens, Wouter, Robrecht Cannoodt, Helena Todorov, and Yvan Saeys.
 2019. “A Comparison of Single-Cell Trajectory Inference Methods.”
 *Nature Biotechnology* 37 (5): 547.
 <https://doi.org/10.1038/s41587-019-0071-9>.
-\* Equal contribution
 
 </div>
 
