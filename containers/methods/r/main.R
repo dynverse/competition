@@ -10,7 +10,6 @@ dataset_location <- params[1]
 output_folder <- params[2]
 
 # read in sparse matrix
-
 dataset_h5 <- H5File$new(dataset_location)
 
 expression_h5 <- dataset_h5[["data"]][["expression"]]
