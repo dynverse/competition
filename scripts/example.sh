@@ -1,5 +1,4 @@
-# build the R container
-
+# build the method container
 CONTAINER_FOLDER=containers/methods/r/
 TAG=dynverse/r_example
 
@@ -19,7 +18,7 @@ DATA_MOUNT="-v $DATA_FOLDER:/data/"
 docker run $DATA_MOUNT $RESULT_MOUNT dynverse/r_example /data/dataset.h5 /ti/
 ls $RESULT_FOLDER
 
-# first convert the two csv's into the commen trajectory format (https://dynverse.org)
+# convert the output csv's into an HDF5 file that can be used for further processing (https://dynverse.org)
 docker run $DATA_MOUNT $RESULT_MOUNT dynverse/convert_output --dataset /data/dataset.h5 --output_folder /ti/ --model /ti/model.h5
 ls $RESULT_FOLDER
 
