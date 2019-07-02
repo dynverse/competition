@@ -65,7 +65,7 @@ The input file is an HDF5 file, which contains two matrices: the counts
 (the raw data matrix) and expression (a log normalized derivation of the
 counts). These matrices contain the expression of genes (columns) within
 hundreds to millions of cells (rows). Example HDF5 files are present in
-the [examples folder](../examples) (*dataset.h5*).
+the [examples input folder](../examples/input) (*dataset.h5*).
 
 Because the data is very sparse, the matrices are stored inside a sparse
 format: [Compressed sparse column format
@@ -81,7 +81,9 @@ lengths of these connections (*length*). The progressions contains for
 each cell (*cell\_id*) where it is located along this topology (*from*,
 *to* and *percentage* ∈ \[0, 1\]). Each cell can only be present on one
 edge. Both outputs have to be saved as a comma separated file without an
-index but with header.
+index but with header. Example csv files are present in the [examples
+output folder](../examples/output) (*progressions.csv* and
+*milestone\_network.csv*).
 
 We provided an example to save these two objects for
 [R](../containers/methods/r/main.R#5),

@@ -149,11 +149,11 @@ examples %>%
 
 You have to write a docker container that reads in two command-line arguments, the first contains the location of an input file, and the second the location of the output folder, within the container.
 
-The input file is an HDF5 file, which contains two matrices: the counts (the raw data matrix) and expression (a log normalized derivation of the counts). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples folder](../examples) (_dataset.h5_).
+The input file is an HDF5 file, which contains two matrices: the counts (the raw data matrix) and expression (a log normalized derivation of the counts). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples input folder](../examples/input) (_dataset.h5_).
 
 Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_(CSC_or_CCS)). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()`
 
-As output you have to provide two files. The milestone network is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The progressions contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Each cell can only be present on one edge. Both outputs have to be saved as a comma separated file without an index but with header.
+As output you have to provide two files. The milestone network is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The progressions contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Each cell can only be present on one edge. Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples output folder](../examples/output) (_progressions.csv_ and _milestone\_network.csv_).
 
 We provided an example to save these two objects for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()`
 
