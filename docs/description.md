@@ -53,32 +53,40 @@ languages:
 
 | Example                                | Dockerfile                                            | Input                                                | Onput                                                  |
 | :------------------------------------- | :---------------------------------------------------- | :--------------------------------------------------- | :----------------------------------------------------- |
-| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#5)        | [main.R\#60](../containers/methods/r/main.R#60)        |
-| [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#9) | [main.py\#55](../containers/methods/python/main.py#55) |
-| [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#9)  | [main.jl\#61](../containers/methods/julia/main.jl#61)  |
+| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#5)        | [main.R\#52](../containers/methods/r/main.R#52)        |
+| [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#9) | [main.py\#51](../containers/methods/python/main.py#51) |
+| [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#9)  | [main.jl\#58](../containers/methods/julia/main.jl#58)  |
 
 You have to write a docker container that reads in two command-line
-arguments, the first contains the location of the input file, and the
+arguments, the first contains the location of an input file, and the
 second the location of the output folder, within the container.
 
-You get as input two matrices: the counts and expression. These matrices
-contain the expression of genes (columns) within hundreds to millions of
-cells (rows).
+The input file is an HDF5 file, which contains two matrices: the counts
+(the raw data matrix) and expression (a log normalized derivation of the
+counts). These matrices contain the expression of genes (columns) within
+hundreds to millions of cells (rows). Example HDF5 files are present in
+the [examples folder](../examples) (*dataset.h5*).
 
-Because the data is very sparse, the matrices are stored in HDF5 and
-inside a sparse format: [Compressed sparse column format
+Because the data is very sparse, the matrices are stored inside a sparse
+format: [Compressed sparse column format
 (CSC)](https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_\(CSC_or_CCS\)).
-Check out the examples for [R](../containers/methods/r/main.R#5),
+We provided an example to read in these matrices for
+[R](../containers/methods/r/main.R#5),
 [Python](../containers/methods/python/main.py#9) and
 [Julia](../containers/methods/julia/main.jl#9)
 
-For output you have to provide two files. The milestone network is a
+As output you have to provide two files. The milestone network is a
 table containing how milestones are connected (*from* and *to*) and the
 lengths of these connections (*length*). The progressions contains for
 each cell (*cell\_id*) where it is located along this topology (*from*,
 *to* and *percentage* ∈ \[0, 1\]). Each cell can only be present on one
 edge. Both outputs have to be saved as a comma separated file without an
 index but with header.
+
+We provided an example to save these two objects for
+[R](../containers/methods/r/main.R#5),
+[Python](../containers/methods/python/main.py#9) and
+[Julia](../containers/methods/julia/main.jl#9)
 
 ## Evaluation
 
