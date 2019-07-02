@@ -45,7 +45,7 @@ TAG="dynverse/convert_output"
 chmod +x $FOLDER/main.R
 docker build -t $TAG $FOLDER
 
-
+docker push $TAG
 
 
 
@@ -55,3 +55,5 @@ TAG="dynverse/dyneval"
 
 chmod +x $FOLDER/main.R
 docker build -t $TAG $FOLDER
+
+docker push $TAG

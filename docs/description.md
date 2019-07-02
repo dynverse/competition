@@ -89,9 +89,9 @@ Because the data is very sparse, the matrices are stored inside a sparse
 format: [Compressed sparse column format
 (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html).
 We provided an example to read in these matrices for
-[R](../containers/methods/r/main.R#5),
-[Python](../containers/methods/python/main.py#9) and
-[Julia](../containers/methods/julia/main.jl#9) . This format stores
+[R](../containers/methods/r/main.R#L5),
+[Python](../containers/methods/python/main.py#L9) and
+[Julia](../containers/methods/julia/main.jl#L9) . This format stores
 three sparse array, *i*, *p* and *x*. *x* contains the actual values,
 *i* contains the row index for each value, and *p* contains which of the
 elements of *i* and *x* are in each column (i.e. *p*<sub><i>j</i></sub>
@@ -110,9 +110,9 @@ folder](../examples/output) (*progressions.csv* and
 *milestone\_network.csv*).
 
 We provided an example to save these two objects for
-[R](../containers/methods/r/main.R#5),
-[Python](../containers/methods/python/main.py#9) and
-[Julia](../containers/methods/julia/main.jl#9)
+[R](../containers/methods/r/main.R#L51),
+[Python](../containers/methods/python/main.py#L51) and
+[Julia](../containers/methods/julia/main.jl#L58)
 
 ## Evaluation
 
