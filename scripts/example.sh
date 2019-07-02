@@ -20,7 +20,7 @@ docker run $DATA_MOUNT $RESULT_MOUNT dynverse/r_example /data/${DATASET_ID}.h5 /
 ls $RESULT_FOLDER
 
 # convert the output csv's into an HDF5 file that can be used for further processing (https://dynverse.org)
-docker run $DATA_MOUNT $RESULT_MOUNT dynverse/convert_output --dataset /data/dataset.h5 --output_folder /ti/ --model /ti/model.h5
+docker run $DATA_MOUNT $RESULT_MOUNT dynverse/convert_output --dataset /data/${DATASET_ID}.h5 --output_folder /ti/ --model /ti/model.h5
 ls $RESULT_FOLDER
 
 # then evaluate it using the dyneval docker
