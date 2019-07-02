@@ -43,7 +43,7 @@ a normalized format (expression matrix). The goal is to construct a
 topology that represents these cells, and to place these cells on the
 correct locations along this topology.
 
-![](img/input_output.svg)
+![](img/input_output.png)
 
 ## Input and output format
 
