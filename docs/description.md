@@ -57,8 +57,9 @@ edge and a percentage indicating how far it has progressed in that edge.
 ### Quick start
 
 To get started, check out the examples we provided for different
-programming
-languages:
+programming languages. These examples infer a simple linear trajectory
+by using the first component of a principal component analysis as
+progression.
 
 | Example                                | Dockerfile                                            | Input                                                 | Onput                                                   |
 | :------------------------------------- | :---------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------ |
@@ -68,14 +69,15 @@ languages:
 
 ### Detailed description
 
-You have to write a docker container that reads in two command-line
-arguments: the first contains the location of an input file, and the
-second the location of the output folder, within the container. Examples
-of Dockerfile are provided for [R](../containers/methods/r/Dockerfile),
+You have to write a docker container that will read in the input files
+and write out the output files in a mounted folder. This container has
+to have an entrypoint that will ready in two command-line arguments: the
+first contains the location of the input file, and the second the
+location of the output folder. Examples of Dockerfiles (and associated
+entrypoints) are provided for [R](../containers/methods/r/Dockerfile),
 [Python](../containers/methods/python/Dockerfile) and
-[Julia](../containers/methods/julia/Dockerfile). Make sure to specify an
-entrypoint that will read in the two parameters using the JSON notation
-as is shown in the examples.
+[Julia](../containers/methods/julia/Dockerfile). Make sure to specify
+the entrypoint using the JSON notation as is shown in the examples.
 
 The input file is an HDF5 file, which contains two matrices: the counts
 (`/data/counts`) and expression (`/data/expression`). These matrices
@@ -93,7 +95,9 @@ We provided an example to read in these matrices for
 three sparse array, *i*, *p* and *x*. *x* contains the actual values,
 *i* contains the row index for each value, and *p* contains which of the
 elements of *i* and *x* are in each column (i.e. *p*<sub><i>j</i></sub>
-until *p*<sub><i>j+1</i></sub> are the values in column *j*).
+until *p*<sub><i>j+1</i></sub> are the values from *x* and *i* that are
+in column *j*). We also provide the *rownames*, that correspond to cell
+identifiers, and the *dims*, the dimensions of the matrix.
 
 As output you have to provide two files. The *milestone\_network.csv* is
 a table containing how milestones are connected (*from* and *to*) and
@@ -123,7 +127,22 @@ al. 2019)](https://doi.org/10.1038/s41587-019-0071-9):
     trajectory
   - Similarity between features that change along the trajectory
 
+Each of these values lie between 0 and 1, where 1 is perfect.
+
 Your submission is also evaluated on the average running time.
+
+## Evaluating locally
+
+You can run a method and evaluation locally using the provided docker
+containers. An example of this is provided in
+[scripts/example.sh](../scripts/example.sh). This requires two
+additional docker containers that are distributed through docker hub: a
+convertor to convert the output to the format used by the
+[dynverse](https://dynverse.org) R packages, and an evaluator that reads
+in the output file together with the *goldstandard.h5* file to produce
+scores.
+
+![](img/containers.png)
 
 ## Further reading
 

@@ -85,7 +85,7 @@ theme <- theme(
 plot_dataset <- dataset %>% 
   dynplot() +
   geom_cell_point() +
-  labs(caption = "A small single-cell dataset visualized \nin two dimensions using multi-dimensional scaling. Each dot represents one cell.") +
+  labs(caption = "A small single-cell dataset visualized in two dimensions using PCA.\n Each dot represents one cell.") +
   theme
 plot_trajectory <- dataset %>% 
   dynplot() +
@@ -138,7 +138,7 @@ The cells are placed at a particular position of this milestone network. We repr
 
 ### Quick start
 
-To get started, check out the examples we provided for different programming languages:
+To get started, check out the examples we provided for different programming languages. These examples infer a simple linear trajectory by using the first component of a principal component analysis as progression.
 
 ```{r, echo = FALSE}
 examples %>% 
@@ -155,7 +155,7 @@ examples %>%
 
 ### Detailed description
 
-You have to write a docker container that reads in two command-line arguments: the first contains the location of an input file, and the second the location of the output folder, within the container. Examples of Dockerfile are provided for `r examples %>% mutate(link_input = str_glue("[{language}]({folder}/Dockerfile)")) %>% pull(link_input) %>% label_sentence()`. Make sure to specify an entrypoint that will read in the two parameters using the JSON notation as is shown in the examples.
+You have to write a docker container that will read in the input files and write out the output files in a mounted folder. This container has to have an entrypoint that will ready in two command-line arguments: the first contains the location of the input file, and the second the location of the output folder. Examples of Dockerfiles (and associated entrypoints) are provided for `r examples %>% mutate(link_input = str_glue("[{language}]({folder}/Dockerfile)")) %>% pull(link_input) %>% label_sentence()`. Make sure to specify the entrypoint using the JSON notation as is shown in the examples.
 
 ```{r, echo = FALSE}
 # read_lines(paste0(examples %>% filter(language == "Python") %>% pull(folder), "/Dockerfile")) %>% c("```python", ., "```") %>% paste0(collapse = "\n") %>% knitr::asis_output()
@@ -163,7 +163,7 @@ You have to write a docker container that reads in two command-line arguments: t
 
 The input file is an HDF5 file, which contains two matrices: the counts (`/data/counts`) and expression (`/data/expression`). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples input folder](../examples/input) (_dataset.h5_).
 
-Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()` . This format stores three sparse array, _i_, _p_ and _x_. _x_ contains the actual values, _i_ contains the row index for each value, and _p_ contains which of the elements of _i_ and _x_ are in each column (i.e. _p_<sub><i>j</i></sub> until _p_<sub><i>j+1</i></sub> are the values in column _j_).
+Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#{input_line})")) %>% pull(link_input) %>% label_sentence()` . This format stores three sparse array, _i_, _p_ and _x_. _x_ contains the actual values, _i_ contains the row index for each value, and _p_ contains which of the elements of _i_ and _x_ are in each column (i.e. _p_<sub><i>j</i></sub> until _p_<sub><i>j+1</i></sub> are the values from _x_ and _i_ that are in column _j_). We also provide the _rownames_, that correspond to cell identifiers, and the _dims_, the dimensions of the matrix.
 
 As output you have to provide two files. The _milestone\_network.csv_ is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The _progressions.csv_ contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples output folder](../examples/output) (_progressions.csv_ and _milestone\_network.csv_).
 
@@ -178,6 +178,14 @@ Your output will be compared to the known (or expected) trajectory within both s
 - Similarity between the relative positions of cells within the trajectory
 - Similarity between features that change along the trajectory
 
+Each of these values lie between 0 and 1, where 1 is perfect.
+
 Your submission is also evaluated on the average running time.
+
+## Evaluating locally
+
+You can run a method and evaluation locally using the provided docker containers. An example of this is provided in [scripts/example.sh](../scripts/example.sh). This requires two additional docker containers that are distributed through docker hub: a convertor to convert the output to the format used by the [dynverse](https://dynverse.org) R packages, and an evaluator that reads in the output file together with the _goldstandard.h5_ file to produce scores.
+
+![](img/containers.png)
 
 ## Further reading
