@@ -9,12 +9,12 @@ parser <-
   add_option("--model", type = "character", help = "The model, such as linear, bifurcating or tree", default = "linear") %>%
   add_option("--num_cells", type = "integer", help = "Number of cells", default = 200) %>%
   add_option("--num_features", type = "integer", help = "Number of features (genes)", default = 100) %>%
-  add_option("--output_goldstandard", type = "character", help = "Filename for the goldstandard, example: $MOUNT/dataset.h5. Will be a json file containing the scores.", default = "goldstandard.h5") %>%
+  add_option("--output_groundtruth", type = "character", help = "Filename for the groundtruth, example: $MOUNT/dataset.h5. Will be a json file containing the scores.", default = "groundtruth.h5") %>%
   add_option("--output_dataset", type = "character", help = "Filename for the dataset, example: $MOUNT/dataset.h5. Will be a json file containing the scores.", default = "dataset.h5")
 
 parsed_args <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
 
-if (any(sapply(parsed_args[c("output_goldstandard", "output_dataset")], is.null))) {
+if (any(sapply(parsed_args[c("output_groundtruth", "output_dataset")], is.null))) {
   stop("output arguments are mandatory")
 }
 
@@ -25,9 +25,9 @@ trajectory <- dyntoy::generate_dataset(
   num_features = parsed_args$num_features
 )
 
-goldstandard <- trajectory
+groundtruth <- trajectory
 dataset <- trajectory[c("cell_ids", "expression", "counts")]
 
 # write output
-dynutils::write_h5(goldstandard, parsed_args$output_goldstandard)
+dynutils::write_h5(groundtruth, parsed_args$output_groundtruth)
 dynutils::write_h5(dataset, parsed_args$output_dataset)

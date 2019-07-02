@@ -26,7 +26,7 @@ docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/convert_output --dataset $MOUNT/d
 docker run -v $LOCAL:$MOUNT -w $MOUNT dynverse/convert_output --dataset $MOUNT/dataset.h5 --output_folder $MOUNT/output_r/ --model $MOUNT/model.h5
 
 
-docker run -v $LOCAL:/ti/ dynverse/dyneval --goldstandard $MOUNT/goldstandard.h5 --model $MOUNT/model.h5 --output $MOUNT/scores.json
+docker run -v $LOCAL:/ti/ dynverse/dyneval --groundtruth $MOUNT/groundtruth.h5 --model $MOUNT/model.h5 --output $MOUNT/scores.json
 
 
 cd ../

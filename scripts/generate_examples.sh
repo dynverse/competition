@@ -10,7 +10,7 @@ INPUT_FOLDER=$(pwd)/examples/input/
 MOUNT=/ti
 
 create_example() {
-  docker run -v $INPUT_FOLDER:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID --output_goldstandard groundtruth/$EXAMPLE_ID.h5 --output_dataset $EXAMPLE_ID.h5
+  docker run -v $INPUT_FOLDER:$MOUNT -w $MOUNT dynverse/dyntoy --model $EXAMPLE_ID --output_groundtruth groundtruth/$EXAMPLE_ID.h5 --output_dataset $EXAMPLE_ID.h5
 }
 
 EXAMPLE_ID=linear create_example

@@ -184,7 +184,7 @@ Your submission is also evaluated on the average running time.
 
 ## Evaluating locally
 
-You can run a method and evaluation locally using the provided docker containers. An example of this is provided in [scripts/example.sh](../scripts/example.sh). This requires two additional docker containers that are distributed through docker hub: a convertor to convert the output to the format used by the [dynverse](https://dynverse.org) R packages, and an evaluator that reads in the output file together with the _goldstandard.h5_ file to produce scores.
+You can run a method and evaluation locally using the provided docker containers. An example of this is provided in [scripts/example.sh](../scripts/example.sh). This requires two additional docker containers that are distributed through docker hub: a convertor to convert the output to the format used by the [dynverse](https://dynverse.org) R packages, and an evaluator that reads in the output file together with the ground truth HDF5 file to produce scores.
 
 ![](img/containers.png)
 
