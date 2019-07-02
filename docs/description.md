@@ -150,10 +150,11 @@ scores.
 
 <div id="ref-Saelens_Cannoodt_Todorov_Saeys_2019">
 
-Saelens, Wouter, Robrecht Cannoodt, Helena Todorov, and Yvan Saeys.
+Wouter Saelens\*, Robrecht Cannoodt\*, Helena Todorov, and Yvan Saeys.
 2019. “A Comparison of Single-Cell Trajectory Inference Methods.”
 *Nature Biotechnology* 37 (5): 547.
 <https://doi.org/10.1038/s41587-019-0071-9>.
+\* Equal contribution
 
 </div>
 
