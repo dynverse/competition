@@ -1,8 +1,9 @@
 #!/usr/local/bin/Rscript
 
-library(optparse)
+library(optparse, quietly = TRUE, warn.conflicts = FALSE)
 library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-library(dyneval)
+library(dyneval, quietly = TRUE, warn.conflicts = FALSE)
+requireNamespace("hdf5r", quietly = TRUE)
 
 metrics <- dyneval::metrics
 

@@ -1,8 +1,9 @@
 #!/usr/local/bin/Rscript
 
-library(optparse)
+library(optparse, quietly = TRUE, warn.conflicts = FALSE)
 library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-library(dyntoy)
+library(dyntoy, quietly = TRUE, warn.conflicts = FALSE)
+requireNamespace("hdf5r", quietly = TRUE)
 
 parser <-
   OptionParser(usage = paste0("LOCAL=/path/to/folder; MOUNT=/ti; docker run -v $LOCAL:$MOUNT dynverse/dyneval")) %>%
