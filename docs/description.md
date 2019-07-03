@@ -124,7 +124,7 @@ We provided an example to save these two objects for
 
 Your output will be compared to the known (or expected) trajectory
 within both synthetic and real data. This is done using four metrics, as
-described in [(Saelens\* et
+described in [(Saelens et
 al. 2019)](https://doi.org/10.1038/s41587-019-0071-9):
 
   - Similarity between the topology
@@ -155,6 +155,10 @@ After conversion, you have access to all R
 trajectories, e.g.:
 
 ``` r
+# First time users should run this:
+# install.packages("devtools")
+# devtools::install_github("dynverse/dyno")
+
 library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth
