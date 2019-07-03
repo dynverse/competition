@@ -11,7 +11,7 @@ RESULT_MOUNT="-v $RESULT_FOLDER:/ti/"
 mkdir $RESULT_FOLDER
 
 # define the folder where the data is stored
-DATA_FOLDER=$(pwd)/examples/input
+DATA_FOLDER=$(pwd)/examples/inputs
 GT_FOLDER=$(pwd)/examples/ground-truths
 DATA_MOUNT="-v $DATA_FOLDER:/data/"
 GT_MOUNT="-v $GT_FOLDER:/gt"
