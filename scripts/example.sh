@@ -12,7 +12,9 @@ mkdir $RESULT_FOLDER
 
 # define the folder where the data is stored
 DATA_FOLDER=$(pwd)/examples/input
+GT_FOLDER=$(pwd)/examples/ground-truths
 DATA_MOUNT="-v $DATA_FOLDER:/data/"
+GT_MOUNT="-v $GT_FOLDER:/gt"
 DATASET_ID=linear
 
 # run the R container on the test dataset
@@ -24,5 +26,5 @@ docker run $DATA_MOUNT $RESULT_MOUNT dynverse/convert_output --dataset /data/${D
 ls $RESULT_FOLDER
 
 # then evaluate it using the dyneval docker
-docker run $DATA_MOUNT $RESULT_MOUNT dynverse/dyneval --groundtruth /data/groundtruth/${DATASET_ID}.h5 --model /ti/model.h5 --output_scores /ti/scores.json
+docker run $DATA_MOUNT $GT_MOUNT $RESULT_MOUNT dynverse/dyneval --groundtruth /gt/${DATASET_ID}.h5 --model /ti/model.h5 --output_scores /ti/scores.json
 cat $RESULT_FOLDER/scores.json

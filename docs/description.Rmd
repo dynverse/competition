@@ -197,8 +197,8 @@ library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth
 model <- dynutils::read_h5("../results/model.h5")
-dataset <- dynutils::read_h5("../examples/input/linear.h5")
-groundtruth <- dynutils::read_h5("../examples/input/groundtruth/linear.h5")
+dataset <- dynutils::read_h5("../examples/inputs/linear.h5")
+groundtruth <- dynutils::read_h5("../examples/ground-truths/linear.h5")
 
 # add a dimensionality reduction to the ground truth using landmark MDS
 groundtruth <- groundtruth %>% add_dimred(dyndimred::dimred_landmark_mds)

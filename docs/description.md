@@ -82,8 +82,8 @@ the entrypoint using the JSON notation as is shown in the examples.
 The input file is an HDF5 file, which contains two matrices: the counts
 (`/data/counts`) and expression (`/data/expression`). These matrices
 contain the expression of genes (columns) within hundreds to millions of
-cells (rows). Example HDF5 files are present in the [examples input
-folder](../examples/input) (*dataset.h5*).
+cells (rows). Example HDF5 files are present in the [examples inputs
+folder](../examples/inputs) (*dataset.h5*).
 
 Because the data is very sparse, the matrices are stored inside a sparse
 format: [Compressed sparse column format
@@ -105,8 +105,8 @@ the lengths of these connections (*length*). The *progressions.csv*
 contains for each cell (*cell\_id*) where it is located along this
 topology (*from*, *to* and *percentage* ∈ \[0, 1\]). Both outputs have
 to be saved as a comma separated file without an index but with header.
-Example csv files are present in the [examples output
-folder](../examples/output) (*progressions.csv* and
+Example csv files are present in the [examples outputs
+folder](../examples/outputs) (*progressions.csv* and
 *milestone\_network.csv*).
 
 We provided an example to save these two objects for
@@ -153,8 +153,8 @@ library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth
 model <- dynutils::read_h5("../results/model.h5")
-dataset <- dynutils::read_h5("../examples/input/linear.h5")
-groundtruth <- dynutils::read_h5("../examples/input/groundtruth/linear.h5")
+dataset <- dynutils::read_h5("../examples/inputs/linear.h5")
+groundtruth <- dynutils::read_h5("../examples/ground-truths/linear.h5")
 
 # add a dimensionality reduction to the ground truth using landmark MDS
 groundtruth <- groundtruth %>% add_dimred(dyndimred::dimred_landmark_mds)
