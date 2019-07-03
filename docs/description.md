@@ -162,12 +162,11 @@ dimred <- groundtruth$dimred
 # plot both the groundtruth and model
 patchwork::wrap_plots(
   dynplot::plot_dimred(groundtruth, dimred = dimred) + ggtitle("Ground truth"),
-  patchwork::plot_spacer(),
   dynplot::plot_dimred(model, dimred = dimred) + ggtitle("Model")
 )
 ```
 
-![](description_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](description_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ## Further reading
 

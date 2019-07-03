@@ -190,6 +190,9 @@ You can run a method and evaluation locally using the provided docker containers
 
 After conversion, you have access to all R [dynverse](https://dynverse.org) packages for visualizing the trajectories, e.g.:
 
+```{r, include = FALSE}
+set.seed(1)
+```
 ```{r, message=FALSE}
 library(dyno, quietly = TRUE)
 
