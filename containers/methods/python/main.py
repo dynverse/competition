@@ -6,7 +6,7 @@ import scipy.sparse
 import sklearn.decomposition
 import pandas as pd
 
-# Read data ---------------------------------------------------------------
+##### Read data #####
 
 # parse location of dataset and output folder
 dataset_location = sys.argv[1]
@@ -23,7 +23,7 @@ expression = scipy.sparse.csc_matrix((
 )
 cell_ids = expression_h5["rownames"][()].astype(str)
 
-# Infer a trajectory ------------------------------------------------------
+##### Infer a trajectory #####
 
 # do pca
 pca = sklearn.decomposition.TruncatedSVD()
@@ -48,6 +48,6 @@ progressions = pd.DataFrame({
 progressions["from"] = "A"
 progressions["to"] = "B"
 
-# Save output -------------------------------------------------------------
+##### Save output #####
 milestone_network.to_csv(output_folder + "milestone_network.csv", index = False)
 progressions.to_csv(output_folder + "progressions.csv", index = False)

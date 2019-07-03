@@ -2,7 +2,7 @@
 
 library(hdf5r)
 
-# Read data ---------------------------------------------------------------
+##### Read data #####
 
 # parse location of dataset and output folder
 params <- commandArgs(trailingOnly = TRUE)
@@ -25,7 +25,7 @@ expression <- Matrix::sparseMatrix(
   index1 = FALSE
 )
 
-# Infer a trajectory ------------------------------------------------------
+##### Infer a trajectory #####
 
 # do pca
 pca <- prcomp(expression)
@@ -48,6 +48,6 @@ progressions <- tibble::tibble(
   percentage = time
 )
 
-# Save output -------------------------------------------------------------
+##### Save output #####
 write.csv(progressions, paste0(output_folder, "progressions.csv"), row.names = FALSE)
 write.csv(milestone_network, paste0(output_folder, "milestone_network.csv"), row.names = FALSE)
