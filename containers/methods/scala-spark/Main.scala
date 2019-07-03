@@ -76,8 +76,8 @@ object Main {
 
     // creating output data frames
     val milestoneNetwork = Seq(("begin", "end", 1)).toDF("from", "to", "length")
-    
-    val milestonePercentages = 
+
+    val progressions =
       (cell_ids zip pseudotime).
         map(a => (a._1, "begin", "end", a._2)).
         toSeq.
@@ -85,8 +85,8 @@ object Main {
 
     /* ##### Save output ##### */
     dataFrameToCsv(milestoneNetwork, s"$outputFolder/milestone_network.csv")
-    dataFrameToCsv(milestonePercentages, s"$outputFolder/milestone_percentages.csv")
-    
+    dataFrameToCsv(progressions, s"$outputFolder/progressions.csv")
+
     // stop spark
     spark.stop()
   }
