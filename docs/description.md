@@ -144,6 +144,31 @@ scores.
 
 ![](img/containers.png)
 
+After conversion, you have access to all R
+[dynverse](https://dynverse.org) packages for visualizing the
+trajectories, e.g.:
+
+``` r
+library(dyno, quietly = TRUE)
+
+# load in the model and groundtruth
+model <- dynutils::read_h5("../results/model.h5")
+groundtruth <- dynutils::read_h5("../examples/input/groundtruth/linear.h5")
+
+# add a dimensionality reduction to the ground truth using landmark MDS
+groundtruth <- groundtruth %>% add_dimred(dyndimred::dimred_landmark_mds)
+dimred <- groundtruth$dimred
+
+# plot both the groundtruth and model
+patchwork::wrap_plots(
+  dynplot::plot_dimred(groundtruth, dimred = dimred) + ggtitle("Ground truth"),
+  patchwork::plot_spacer(),
+  dynplot::plot_dimred(model, dimred = dimred) + ggtitle("Model")
+)
+```
+
+![](description_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
 ## Further reading
 
 <div id="refs" class="references">
