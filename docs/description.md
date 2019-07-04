@@ -1,6 +1,38 @@
 Topcoder single-cell trajectory inference competition
 ================
 
+# TMP: Running TC submissions and Scorer Locally
+_This is a temporary section, to be blend into the details below._
+
+To build a sample TC submission from [tc-submissions](../tc-submissions) folder
+do in root of this repo:
+```
+$ sudo docker build -t single-cell-submission \
+  -f tc-submissions/submission-python/code/Dockerfile \
+  tc-submissions/submission-python/code
+```
+To run resulting submission against example inputs do:
+```
+$ sudo docker run -v $(pwd)/examples/inputs:/inputs \
+  -v $(pwd)/results/:/outputs single-cell-submission /inputs /outputs
+```
+To build TC scorer do:
+```
+$ sudo docker build -t single-cell-scorer -f tc-scorer/Dockerfile \
+  tc-scorer
+```
+To score results generated before do:
+```
+$ sudo docker run -v $(pwd)/results:/outputs \
+  -v $(pwd)/examples/inputs:/inputs \
+  -v $(pwd)/examples/ground-truths:/ground-truths \
+  single-cell-scorer 10000
+```
+where the last argument should be the overal runtime [ms] of solution on all
+datasets. The accuracy score will be decreased exponentially the longer this
+time is. If that argument is zero or not present, the aggregated score will
+be equal to the accuracy score.
+
 ## Biological background
 
 Cells are constantly changing based on external and internal stimuli.
