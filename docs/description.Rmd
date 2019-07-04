@@ -4,6 +4,8 @@ output: github_document
 params:
   language: R
 bibliography: assets/ref.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -24,21 +26,22 @@ library(dynwrap)
 ```{r, echo = FALSE}
 find_input_line <- function(x) {
   read_lines(x) %>% 
-    stringr::str_which("^# Read data")
+    stringr::str_which("##### Read data #####")
 }
 find_output_line <- function(x) {
     read_lines(x) %>% 
-    stringr::str_which("^# Save output")
+    stringr::str_which("##### Save output #####")
 }
 
 examples <- tribble(
   ~language,
   "R",
   "Python",
-  "Julia"
+  "Julia",
+  "Scala-Spark"
 ) %>% 
   mutate(folder = paste0("../containers/methods/", tolower(language))) %>% 
-  mutate(main = fs::dir_ls(folder, glob = "*main*")) %>% 
+  mutate(main = fs::dir_ls(folder, regexp = ".*[Mm]ain*")) %>% 
   mutate(
     input_line = map_int(main, find_input_line),
     output_line = map_int(main, find_output_line),
@@ -192,7 +195,12 @@ After conversion, you have access to all R [dynverse](https://dynverse.org) pack
 ```{r, include = FALSE}
 set.seed(1)
 ```
+
 ```{r, message=FALSE}
+# First time users should run this:
+# install.packages("devtools")
+# devtools::install_github("dynverse/dyno")
+
 library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth

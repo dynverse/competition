@@ -18,7 +18,7 @@ GT_MOUNT="-v $GT_FOLDER:/gt"
 DATASET_ID=linear
 
 # run the R container on the test dataset
-docker run $DATA_MOUNT $RESULT_MOUNT dynverse/r_example /data/${DATASET_ID}.h5 /ti/
+docker run $DATA_MOUNT $RESULT_MOUNT $TAG /data/${DATASET_ID}.h5 /ti/
 ls $RESULT_FOLDER
 
 # convert the output csv's into an HDF5 file that can be used for further processing (https://dynverse.org)

@@ -61,11 +61,12 @@ programming languages. These examples infer a simple linear trajectory
 by using the first component of a principal component analysis as
 progression.
 
-| Example                                | Dockerfile                                            | Input                                                 | Onput                                                   |
-| :------------------------------------- | :---------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------ |
-| [R](../containers/methods/r)           | [Dockerfile](../containers/methods/r/Dockerfile)      | [main.R\#5](../containers/methods/r/main.R#L5)        | [main.R\#51](../containers/methods/r/main.R#L51)        |
-| [Python](../containers/methods/python) | [Dockerfile](../containers/methods/python/Dockerfile) | [main.py\#9](../containers/methods/python/main.py#L9) | [main.py\#51](../containers/methods/python/main.py#L51) |
-| [Julia](../containers/methods/julia)   | [Dockerfile](../containers/methods/julia/Dockerfile)  | [main.jl\#9](../containers/methods/julia/main.jl#L9)  | [main.jl\#58](../containers/methods/julia/main.jl#L58)  |
+| Example                                          | Dockerfile                                                 | Input                                                              | Onput                                                              |
+| :----------------------------------------------- | :--------------------------------------------------------- | :----------------------------------------------------------------- | :----------------------------------------------------------------- |
+| [R](../containers/methods/r)                     | [Dockerfile](../containers/methods/r/Dockerfile)           | [main.R\#5](../containers/methods/r/main.R#L5)                     | [main.R\#51](../containers/methods/r/main.R#L51)                   |
+| [Python](../containers/methods/python)           | [Dockerfile](../containers/methods/python/Dockerfile)      | [main.py\#9](../containers/methods/python/main.py#L9)              | [main.py\#51](../containers/methods/python/main.py#L51)            |
+| [Julia](../containers/methods/julia)             | [Dockerfile](../containers/methods/julia/Dockerfile)       | [main.jl\#9](../containers/methods/julia/main.jl#L9)               | [main.jl\#58](../containers/methods/julia/main.jl#L58)             |
+| [Scala-Spark](../containers/methods/scala-spark) | [Dockerfile](../containers/methods/scala-spark/Dockerfile) | [Main.scala\#40](../containers/methods/scala-spark/Main.scala#L40) | [Main.scala\#86](../containers/methods/scala-spark/Main.scala#L86) |
 
 ### Detailed description
 
@@ -75,9 +76,11 @@ to have an entrypoint that will ready in two command-line arguments: the
 first contains the location of the input file, and the second the
 location of the output folder. Examples of Dockerfiles (and associated
 entrypoints) are provided for [R](../containers/methods/r/Dockerfile),
-[Python](../containers/methods/python/Dockerfile) and
-[Julia](../containers/methods/julia/Dockerfile). Make sure to specify
-the entrypoint using the JSON notation as is shown in the examples.
+[Python](../containers/methods/python/Dockerfile),
+[Julia](../containers/methods/julia/Dockerfile) and
+[Scala-Spark](../containers/methods/scala-spark/Dockerfile). Make sure
+to specify the entrypoint using the JSON notation as is shown in the
+examples.
 
 The input file is an HDF5 file, which contains two matrices: the counts
 (`/data/counts`) and expression (`/data/expression`). These matrices
@@ -90,14 +93,16 @@ format: [Compressed sparse column format
 (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html).
 We provided an example to read in these matrices for
 [R](../containers/methods/r/main.R#L5),
-[Python](../containers/methods/python/main.py#L9) and
-[Julia](../containers/methods/julia/main.jl#L9) . This format stores
-three sparse array, *i*, *p* and *x*. *x* contains the actual values,
-*i* contains the row index for each value, and *p* contains which of the
-elements of *i* and *x* are in each column (i.e. *p*<sub><i>j</i></sub>
-until *p*<sub><i>j+1</i></sub> are the values from *x* and *i* that are
-in column *j*). We also provide the *rownames*, that correspond to cell
-identifiers, and the *dims*, the dimensions of the matrix.
+[Python](../containers/methods/python/main.py#L9),
+[Julia](../containers/methods/julia/main.jl#L9) and
+[Scala-Spark](../containers/methods/scala-spark/Main.scala#L40) . This
+format stores three sparse array, *i*, *p* and *x*. *x* contains the
+actual values, *i* contains the row index for each value, and *p*
+contains which of the elements of *i* and *x* are in each column (i.e.
+*p*<sub><i>j</i></sub> until *p*<sub><i>j+1</i></sub> are the values
+from *x* and *i* that are in column *j*). We also provide the
+*rownames*, that correspond to cell identifiers, and the *dims*, the
+dimensions of the matrix.
 
 As output you have to provide two files. The *milestone\_network.csv* is
 a table containing how milestones are connected (*from* and *to*) and
@@ -111,8 +116,9 @@ folder](../examples/outputs) (*progressions.csv* and
 
 We provided an example to save these two objects for
 [R](../containers/methods/r/main.R#L51),
-[Python](../containers/methods/python/main.py#L51) and
-[Julia](../containers/methods/julia/main.jl#L58)
+[Python](../containers/methods/python/main.py#L51),
+[Julia](../containers/methods/julia/main.jl#L58) and
+[Scala-Spark](../containers/methods/scala-spark/Main.scala#L86)
 
 ## Evaluation
 
@@ -149,6 +155,10 @@ After conversion, you have access to all R
 trajectories, e.g.:
 
 ``` r
+# First time users should run this:
+# install.packages("devtools")
+# devtools::install_github("dynverse/dyno")
+
 library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth
@@ -179,10 +189,10 @@ patchwork::wrap_plots(
 
 <div id="ref-Saelens_Cannoodt_Todorov_Saeys_2019">
 
-Saelens, Wouter, Robrecht Cannoodt, Helena Todorov, and Yvan Saeys.
+Wouter Saelens\*, Robrecht Cannoodt\*, Helena Todorov, and Yvan Saeys.
 2019. “A Comparison of Single-Cell Trajectory Inference Methods.”
-*Nature Biotechnology* 37 (5): 547.
-<https://doi.org/10.1038/s41587-019-0071-9>.
+*Nature Biotechnology* 37 (5): 547–554.
+<https://doi.org/10.1038/s41587-019-0071-9>. \* These authors contributed equally.
 
 </div>
 

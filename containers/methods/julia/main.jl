@@ -6,7 +6,7 @@ using MultivariateStats
 using DataFrames
 using CSV
 
-# Read data ---------------------------------------------------------------
+##### Read data #####
 
 # parse location of dataset and output folder
 
@@ -30,7 +30,7 @@ expression = SparseMatrixCSC(
 
 cell_ids = expression_h5["rownames"]
 
-# Infer a trajectory ------------------------------------------------------
+##### Infer a trajectory #####
 
 # do pca
 pca = fit(KernelPCA, expression; maxoutdim=1)
@@ -55,6 +55,6 @@ progressions = DataFrame(
     percentage = time
 )
 
-# Save output -------------------------------------------------------------
+##### Save output #####
 CSV.write(output_folder * "progressions.csv", progressions)
 CSV.write(output_folder * "milestone_network.csv", milestone_network)
