@@ -72,15 +72,15 @@ object Main {
     spark.stop()
   }
 
-  // read the expression data from a h5 file
+  // read the counts data from a h5 file
   def readDataset(filename: String) = {
     val reader = HDF5Factory.openForReading(filename)
 
-    val dims = reader.readIntArray("data/expression/dims")
-    val i = reader.readIntArray("data/expression/i")
-    val p = reader.readIntArray("data/expression/p")
-    val x = reader.readFloatArray("data/expression/x")
-    val cell_ids = reader.readStringArray("data/expression/rownames")
+    val dims = reader.readIntArray("data/counts/dims")
+    val i = reader.readIntArray("data/counts/i")
+    val p = reader.readIntArray("data/counts/p")
+    val x = reader.readFloatArray("data/counts/x")
+    val cell_ids = reader.readStringArray("data/counts/rownames")
 
     val matrix = new SparseMatrix(dims(0), dims(1), p, i, x.map(_.toDouble)).toSparseRowMajor
     (cell_ids, matrix)

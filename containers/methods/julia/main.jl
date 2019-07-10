@@ -15,26 +15,26 @@ output_folder = ARGS[2]
 
 # read in sparse matrix
 data = h5open(dataset_location, "r")
-expression_h5 = read(data["data"]["expression"])
+counts_h5 = read(data["data"]["counts"])
 close(data)
 
-p = expression_h5["p"] .+ 1
-i = expression_h5["i"] .+ 1
-expression = SparseMatrixCSC(
-    expression_h5["dims"][1],
-    expression_h5["dims"][2],
+p = counts_h5["p"] .+ 1
+i = counts_h5["i"] .+ 1
+counts = SparseMatrixCSC(
+    counts_h5["dims"][1],
+    counts_h5["dims"][2],
     p,
     i,
-    expression_h5["x"]
+    counts_h5["x"]
 )
 
-cell_ids = expression_h5["rownames"]
+cell_ids = counts_h5["rownames"]
 
 ##### Infer a trajectory #####
 
 # do pca
-pca = fit(KernelPCA, expression; maxoutdim=1)
-pca_transformed = transform(pca, expression)
+pca = fit(KernelPCA, counts; maxoutdim=1)
+pca_transformed = transform(pca, counts)
 
 # select first principal component to construct a linear trajectory
 # the component is scaled between 0 and 1 to get to a "percentage"

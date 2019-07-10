@@ -12,15 +12,15 @@ output_folder <- params[2]
 # read in sparse matrix
 dataset_h5 <- H5File$new(dataset_location)
 
-expression_h5 <- dataset_h5[["data"]][["expression"]]
-expression <- Matrix::sparseMatrix(
-  i = expression_h5[["i"]]$read(),
-  p = expression_h5[["p"]]$read(),
-  x = expression_h5[["x"]]$read(),
-  dims = expression_h5[["dims"]]$read(),
+counts_h5 <- dataset_h5[["data"]][["counts"]]
+counts <- Matrix::sparseMatrix(
+  i = counts_h5[["i"]]$read(),
+  p = counts_h5[["p"]]$read(),
+  x = counts_h5[["x"]]$read(),
+  dims = counts_h5[["dims"]]$read(),
   dimnames = list(
-    rownames = expression_h5[["rownames"]]$read(),
-    colnames = expression_h5[["colnames"]]$read()
+    rownames = counts_h5[["rownames"]]$read(),
+    colnames = counts_h5[["colnames"]]$read()
   ),
   index1 = FALSE
 )
@@ -28,7 +28,7 @@ expression <- Matrix::sparseMatrix(
 ##### Infer a trajectory #####
 
 # do pca
-pca <- prcomp(expression)
+pca <- prcomp(counts)
 
 # select first principal component to construct a linear trajectory
 # the component is scaled between 0 and 1 to get to a "percentage"
