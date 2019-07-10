@@ -12,7 +12,7 @@ parser <-
   add_option("--groundtruth", type = "character", help = "Filename of the groundtruth, example: $MOUNT/dataset.h5", default = "/ti/groundtruth.h5") %>%
   add_option("--model", type = "character", help = "Filename of the model, example: $MOUNT/dataset.h5. Is normally created by the dynverse/convert_output container", default = "/ti/model.h5")  %>%
   add_option("--output_scores", type = "character", help = "Filename of the scores, example: $MOUNT/dataset.(h5|loom). Will be a json file containing the scores.", default = "/ti/scores.json") %>%
-  add_option("--metrics", type = "character", help = "Which metrics to calculate, example: correlation,him,F1_milestones,featureimp_wcor", default = "correlation,him,F1_milestones,featureimp_wcor")
+  add_option("--metrics", type = "character", help = "Which metrics to calculate, example: correlation,him,F1_milestones,featureimp_wcor", default = "correlation,him,F1_branches,featureimp_wcor")
 
 parsed_args <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
 
@@ -21,7 +21,7 @@ if (any(sapply(parsed_args[c("groundtruth", "model", "output_scores")], is.null)
 }
 
 #' @examples
-#' parsed_args <- list(groundtruth = "test_tmp/groundtruth.h5", model = "test_tmp/model.h5", output_scores = "test_tmp/scores.json", metrics = "correlation,him,F1_milestones,featureimp_wcor")
+#' parsed_args <- list(groundtruth = "test_tmp/groundtruth.h5", model = "test_tmp/model.h5", output_scores = "test_tmp/scores.json", metrics = "correlation,him,F1_branches,featureimp_wcor")
 
 # read dataset and model
 groundtruth <- dynutils::read_h5(parsed_args$groundtruth)

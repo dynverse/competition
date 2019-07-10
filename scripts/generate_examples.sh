@@ -20,6 +20,31 @@ EXAMPLE_ID=bifurcating create_example
 EXAMPLE_ID=tree create_example
 EXAMPLE_ID=disconnected create_example
 
+Rscript - <<EOF
+library(dplyr)
+library(readr)
+library(tidyr)
+
+metrics <- c("correlation", "F1_branches", "featureimp_wcor", "him")
+dataset_ids <- c("linear", "bifurcating", "tree", "disconnected")
+
+crossing(
+  dataset_id = dataset_ids,
+  metric = metrics,
+  type = c("mean", "sd")
+) %>%
+  mutate(score = runif(n())) %>%
+  spread(type, score) %>%
+  write_csv("examples/difficulties.csv")
+
+tibble(
+  dataset_id = dataset_ids,
+  weight = runif(length(dataset_ids))
+) %>%
+  mutate(weight = weight / sum(weight)) %>%
+  write_csv("examples/weights.csv")
+EOF
+
 # output
 mkdir examples/outputs/
 
@@ -39,4 +64,17 @@ MOUNT_OUTPUT=/output
 EXAMPLE_ID=linear create_output
 EXAMPLE_ID=bifurcating create_output
 EXAMPLE_ID=tree create_output
-EXAMPLE_ID=disconnected create_output
+EXAMPLE_ID=disc onnected create_output
+
+# scores
+docker run \
+  -v $(pwd)/examples/difficulties.csv:/difficulties.csv \
+  -v $(pwd)/examples/weights.csv:/weights.csv \
+  -v $(pwd)/examples/ground-truths:/ground-truths \
+  -v $(pwd)/examples/outputs:/outputs \
+  dynverse/tc-scorer:0.1 10000
+
+# score aggregate
+docker run -v $(pwd)/examples:/ti \
+  -w /ti \
+  single-cell-scorer 10000

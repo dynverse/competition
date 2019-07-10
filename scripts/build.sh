@@ -51,3 +51,14 @@ chmod +x $FOLDER/main.R
 docker build -t $TAG $FOLDER
 
 docker push $TAG
+
+## TC-SCORER
+FOLDER="containers/tc-scorer/"
+TAG="dynverse/tc-scorer"
+VERSION=0.1
+
+chmod +x $FOLDER/main.R
+chmod +x $FOLDER/aggregate-scores.R
+docker build -t $TAG:$VERSION $FOLDER
+
+docker push $TAG:$VERSION

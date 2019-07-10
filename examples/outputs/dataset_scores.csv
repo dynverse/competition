@@ -1,0 +1,5 @@
+dataset_id,metric,score
+bifurcating,geometric_mean,0.47173241546737765
+disconnected,geometric_mean,1.4057396350468158e-5
+linear,geometric_mean,0.8498965621596773
+tree,geometric_mean,4.264117966738811e-20

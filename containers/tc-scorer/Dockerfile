@@ -16,6 +16,4 @@ RUN R -e 'devtools::install_github("dynverse/dyneval@devel", dep = T)'
 
 COPY . .
 
-RUN npm install
-
 ENTRYPOINT ["sudo", "./score.sh"]
