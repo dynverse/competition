@@ -6,8 +6,8 @@ COPY ./requirements.txt /requirements/
 
 RUN pip3 install --no-cache-dir -r /requirements/requirements.txt
 
-COPY main.py runner.sh /code/
+COPY main.py /code/
 
 RUN chmod +x /code/*
 
-ENTRYPOINT ["/code/runner.sh"]
+ENTRYPOINT ["/code/main.py"]
