@@ -28,10 +28,7 @@ mkdir $OUTPUT_FOLDER/$DATASET_ID
 ls $OUTPUT_FOLDER/$DATASET_ID
 
 # run on many datasets ----------------------------------------------------------------
-GT_LOCATIONS=($GT_FOLDER/real-gold-aging-hsc-old_kowalczyk.h5)
 GT_LOCATIONS=($GT_FOLDER/*.h5)
-
-echo ${GT_LOCATIONS[2]}
 
 ENTRYPOINT=$(docker inspect --format='{{join .Config.Entrypoint " "}}' $TAG)
 
