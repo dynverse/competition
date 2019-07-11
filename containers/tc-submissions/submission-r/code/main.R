@@ -2,7 +2,7 @@
 
 library(hdf5r)
 
-# Read data ---------------------------------------------------------------
+##### Read data #####
 
 # parse location of dataset and output folder
 params <- commandArgs(trailingOnly = TRUE)
@@ -48,6 +48,6 @@ progressions <- tibble::tibble(
   percentage = time
 )
 
-# Save output -------------------------------------------------------------
+##### Save output #####
 write.csv(progressions, paste0(output_folder, "progressions.csv"), row.names = FALSE)
 write.csv(milestone_network, paste0(output_folder, "milestone_network.csv"), row.names = FALSE)

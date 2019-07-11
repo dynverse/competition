@@ -6,7 +6,7 @@ using MultivariateStats
 using DataFrames
 using CSV
 
-# Read data ---------------------------------------------------------------
+##### Read data #####
 
 # parse location of dataset and output folder
 
@@ -55,6 +55,6 @@ progressions = DataFrame(
     percentage = time
 )
 
-# Save output -------------------------------------------------------------
+##### Save output #####
 CSV.write(output_folder * "progressions.csv", progressions)
 CSV.write(output_folder * "milestone_network.csv", milestone_network)

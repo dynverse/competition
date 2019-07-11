@@ -42,7 +42,7 @@ examples <- tribble(
   "Julia",
   "Scala-Spark"
 ) %>% 
-  mutate(folder = paste0("containers/methods/", tolower(language))) %>% 
+  mutate(folder = paste0("containers/tc-submissions/submission-", tolower(language), "/code/")) %>% 
   mutate(main = fs::dir_ls(folder, regexp = ".*[Mm]ain*")) %>% 
   mutate(
     input_line = map_int(main, find_input_line),
@@ -188,18 +188,23 @@ The first four metrics are aggregated for each dataset using a geometric mean. T
 - A slight difference in performance for more difficult datasets is more important than an equally slight difference for an easy dataset
 - Datasets with a more rare trajectory type (e.g. tree) are given relatively more weight than frequent topologies (e.g. linear)
 
-## Evaluating on one dataset locally
+## Evaluating a method locally
 
-You can run a method and evaluation locally using the provided docker containers. An example of this is provided in [scripts/example.sh](scripts/example.sh). This requires two additional docker containers that are distributed through docker hub: a convertor to convert the output to the format used by the [dynverse](https://dynverse.org) R packages, and an evaluator that reads in the output file together with the ground truth HDF5 file to produce scores.
+You can run a method and the evaluation locally using the script [scripts/example.sh](scripts/example.sh):
 
-![](docs/img/containers.png)
+```{r, echo=FALSE}
+readr::read_file("scripts/example.sh") %>% 
+  paste0("```bash\n", ., "```") %>% 
+  knitr::asis_output()
+```
 
-After conversion, you have access to all R [dynverse](https://dynverse.org) packages for visualizing the trajectories, e.g.:
+## Exploring the output
+
+You can use the `dynverse/convertor` container to convert the output of a method to the format that [dynverse](https://dynverse.org) understands. This can be useful to visualize and inspect the output of a method in R. For example:
 
 ```{r, include = FALSE}
 set.seed(1)
 ```
-
 
 ```{r}
 # First time users should run this:
@@ -209,7 +214,7 @@ set.seed(1)
 library(dyno, quietly = TRUE)
 
 # load in the model and groundtruth
-model <- dynutils::read_h5("results/model.h5")
+model <- dynutils::read_h5("examples/outputs/linear/model.h5")
 dataset <- dynutils::read_h5("examples/inputs/linear.h5")
 groundtruth <- dynutils::read_h5("examples/ground-truths/linear.h5")
 
@@ -227,39 +232,6 @@ patchwork::wrap_plots(
   dynplot::plot_dimred(model2, dimred = dimred) + ggtitle("Model of slingshot")
 )
 ```
-
-## Evaluating on all datasets locally
-
-To build a sample TC submission from [containers/tc-submissions](containers/tc-submissions) folder
-do in root of this repo:
-```
-$ sudo docker build -t single-cell-submission \
-  -f tc-submissions/submission-python/code/Dockerfile \
-  tc-submissions/submission-python/code
-```
-To run resulting submission against example inputs do:
-```
-$ sudo docker run -v $(pwd)/examples/inputs:/inputs \
-  -v $(pwd)/results/:/outputs single-cell-submission /inputs /outputs
-```
-To build TC scorer do:
-```
-$ sudo docker build -t single-cell-scorer -f tc-scorer/Dockerfile \
-  tc-scorer
-```
-To score results generated before do:
-```
-$ sudo docker run \
-  -v $(pwd)/results:/outputs \
-  -v $(pwd)/examples/inputs:/inputs \
-  -v $(pwd)/examples/ground-truths:/ground-truths \
-  -v $(pwd)/examples/
-  single-cell-scorer 10000
-```
-where the last argument should be the overal runtime [ms] of solution on all
-datasets. The accuracy score will be decreased exponentially the longer this
-time is. If that argument is zero or not present, the aggregated score will
-be equal to the accuracy score.
 
 ## Additional information
 

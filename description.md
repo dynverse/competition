@@ -61,12 +61,12 @@ programming languages. These examples infer a simple linear trajectory
 by using the first component of a principal component analysis as
 progression.
 
-| Example                                       | Dockerfile                                              | Input                                                           | Onput                                                           |
-| :-------------------------------------------- | :------------------------------------------------------ | :-------------------------------------------------------------- | :-------------------------------------------------------------- |
-| [R](containers/methods/r)                     | [Dockerfile](containers/methods/r/Dockerfile)           | [main.R\#5](containers/methods/r/main.R#L5)                     | [main.R\#51](containers/methods/r/main.R#L51)                   |
-| [Python](containers/methods/python)           | [Dockerfile](containers/methods/python/Dockerfile)      | [main.py\#9](containers/methods/python/main.py#L9)              | [main.py\#51](containers/methods/python/main.py#L51)            |
-| [Julia](containers/methods/julia)             | [Dockerfile](containers/methods/julia/Dockerfile)       | [main.jl\#9](containers/methods/julia/main.jl#L9)               | [main.jl\#58](containers/methods/julia/main.jl#L58)             |
-| [Scala-Spark](containers/methods/scala-spark) | [Dockerfile](containers/methods/scala-spark/Dockerfile) | [Main.scala\#28](containers/methods/scala-spark/Main.scala#L28) | [Main.scala\#67](containers/methods/scala-spark/Main.scala#L67) |
+| Example                                                               | Dockerfile                                                                      | Input                                                                                  | Onput                                                                                  |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| [R](containers/tc-submissions/submission-r/code/)                     | [Dockerfile](containers/tc-submissions/submission-r/code//Dockerfile)           | [main.R\#5](containers/tc-submissions/submission-r/code/main.R#L5)                     | [main.R\#51](containers/tc-submissions/submission-r/code/main.R#L51)                   |
+| [Python](containers/tc-submissions/submission-python/code/)           | [Dockerfile](containers/tc-submissions/submission-python/code//Dockerfile)      | [main.py\#9](containers/tc-submissions/submission-python/code/main.py#L9)              | [main.py\#51](containers/tc-submissions/submission-python/code/main.py#L51)            |
+| [Julia](containers/tc-submissions/submission-julia/code/)             | [Dockerfile](containers/tc-submissions/submission-julia/code//Dockerfile)       | [main.jl\#9](containers/tc-submissions/submission-julia/code/main.jl#L9)               | [main.jl\#58](containers/tc-submissions/submission-julia/code/main.jl#L58)             |
+| [Scala-Spark](containers/tc-submissions/submission-scala-spark/code/) | [Dockerfile](containers/tc-submissions/submission-scala-spark/code//Dockerfile) | [Main.scala\#28](containers/tc-submissions/submission-scala-spark/code/Main.scala#L28) | [Main.scala\#67](containers/tc-submissions/submission-scala-spark/code/Main.scala#L67) |
 
 ### Detailed description
 
@@ -75,12 +75,13 @@ and write out the output files in a mounted folder. This container has
 to have an entrypoint that will ready in two command-line arguments: the
 first contains the location of the input file, and the second the
 location of the output folder. Examples of Dockerfiles (and associated
-entrypoints) are provided for [R](containers/methods/r/Dockerfile),
-[Python](containers/methods/python/Dockerfile),
-[Julia](containers/methods/julia/Dockerfile) and
-[Scala-Spark](containers/methods/scala-spark/Dockerfile). Make sure to
-specify the entrypoint using the JSON notation as is shown in the
-examples.
+entrypoints) are provided for
+[R](containers/tc-submissions/submission-r/code//Dockerfile),
+[Python](containers/tc-submissions/submission-python/code//Dockerfile),
+[Julia](containers/tc-submissions/submission-julia/code//Dockerfile) and
+[Scala-Spark](containers/tc-submissions/submission-scala-spark/code//Dockerfile).
+Make sure to specify the entrypoint using the JSON notation as is shown
+in the examples.
 
 The input file is an HDF5 file, which contains two matrices: the counts
 (`/data/counts`) and expression (`/data/expression`). These matrices
@@ -92,12 +93,12 @@ Because the data is very sparse, the matrices are stored inside a sparse
 format: [Compressed sparse column format
 (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html).
 We provided an example to read in these matrices for
-[R](containers/methods/r/main.R#L5),
-[Python](containers/methods/python/main.py#L9),
-[Julia](containers/methods/julia/main.jl#L9) and
-[Scala-Spark](containers/methods/scala-spark/Main.scala#L28) . This
-format stores three sparse array, *i*, *p* and *x*. *x* contains the
-actual values, *i* contains the row index for each value, and *p*
+[R](containers/tc-submissions/submission-r/code/main.R#L5),
+[Python](containers/tc-submissions/submission-python/code/main.py#L9),
+[Julia](containers/tc-submissions/submission-julia/code/main.jl#L9) and
+[Scala-Spark](containers/tc-submissions/submission-scala-spark/code/Main.scala#L28)
+. This format stores three sparse array, *i*, *p* and *x*. *x* contains
+the actual values, *i* contains the row index for each value, and *p*
 contains which of the elements of *i* and *x* are in each column (i.e.
 *p*<sub><i>j</i></sub> until *p*<sub><i>j+1</i></sub> are the values
 from *x* and *i* that are in column *j*). We also provide the
@@ -115,10 +116,10 @@ folder](examples/outputs) (*progressions.csv* and
 *milestone\_network.csv*).
 
 We provided an example to save these two objects for
-[R](containers/methods/r/main.R#L51),
-[Python](containers/methods/python/main.py#L51),
-[Julia](containers/methods/julia/main.jl#L58) and
-[Scala-Spark](containers/methods/scala-spark/Main.scala#L67)
+[R](containers/tc-submissions/submission-r/code/main.R#L51),
+[Python](containers/tc-submissions/submission-python/code/main.py#L51),
+[Julia](containers/tc-submissions/submission-julia/code/main.jl#L58) and
+[Scala-Spark](containers/tc-submissions/submission-scala-spark/code/Main.scala#L67)
 
 ## Evaluation
 
@@ -144,22 +145,85 @@ metrics results in a low score overall. They are weighted so that:
   - Datasets with a more rare trajectory type (e.g. tree) are given
     relatively more weight than frequent topologies (e.g. linear)
 
-## Evaluating on one dataset locally
+## Evaluating a method locally
 
-You can run a method and evaluation locally using the provided docker
-containers. An example of this is provided in
-[scripts/example.sh](scripts/example.sh). This requires two additional
-docker containers that are distributed through docker hub: a convertor
-to convert the output to the format used by the
-[dynverse](https://dynverse.org) R packages, and an evaluator that reads
-in the output file together with the ground truth HDF5 file to produce
-scores.
+You can run a method and the evaluation locally using the script
+[scripts/example.sh](scripts/example.sh):
 
-![](docs/img/containers.png)
+``` bash
+# download the datasets from ..... and put them inside the datasets/training/ folder
 
-After conversion, you have access to all R
-[dynverse](https://dynverse.org) packages for visualizing the
-trajectories, e.g.:
+# build the method container
+CONTAINER_FOLDER=containers/tc-submissions/submission-python/code
+TAG=dynverse/python_example
+
+chmod +x $CONTAINER_FOLDER/main.py
+docker build -t $TAG $CONTAINER_FOLDER
+
+# create a folder to store the output and scores
+OUTPUT_FOLDER=$(pwd)/results
+OUTPUT_MOUNT="-v $OUTPUT_FOLDER:/outputs/"
+mkdir $OUTPUT_FOLDER
+
+# define the folders where the data is stored
+DATA_FOLDER=$(pwd)/datasets/training/inputs
+GT_FOLDER=$(pwd)/datasets/training/ground-truths
+
+DATA_MOUNT="-v $DATA_FOLDER:/data/"
+GT_MOUNT="-v $GT_FOLDER:/ground-truths"
+WEIGHTS_MOUNT="-v $(pwd)/datasets/training/weights.csv:/weights.csv"
+DIFFICULTIES_MOUNT="-v $(pwd)/datasets/training/difficulties.csv:/difficulties.csv"
+
+# run on one dataset ------------------------------------------------------------------
+DATASET_ID=real-gold-aging-hsc-old_kowalczyk
+
+mkdir $OUTPUT_FOLDER/$DATASET_ID
+/usr/bin/time -o $OUTPUT_FOLDER/$DATASET_ID/time.txt -f "%e" \
+  docker run $DATA_MOUNT $OUTPUT_MOUNT $TAG \
+  /data/${DATASET_ID}.h5 /outputs/${DATASET_ID}/
+ls $OUTPUT_FOLDER/$DATASET_ID
+
+# run on many datasets ----------------------------------------------------------------
+GT_LOCATIONS=($GT_FOLDER/*.h5)
+
+ENTRYPOINT=$(docker inspect --format='{{join .Config.Entrypoint " "}}' $TAG)
+
+# start the container
+docker stop method && docker rm method
+docker run --name method --entrypoint bash --rm -d -i -t $DATA_MOUNT $OUTPUT_MOUNT $TAG
+
+# loop over every dataset (as an example we only do it for the first 10 here)
+# we remove (potential) previous output and time the execution
+for GT_LOCATION in ${GT_LOCATIONS[@]:1:10}; do
+  DATASET_ID=$(basename -s .h5 $GT_LOCATION)
+  echo $DATASET_ID
+  DATASET_OUTPUT_FOLDER=$OUTPUT_FOLDER/$DATASET_ID/
+  mkdir -p $DATASET_OUTPUT_FOLDER
+  rm -rf $DATASET_OUTPUT_FOLDER/*
+  /usr/bin/time -o $DATASET_OUTPUT_FOLDER/time.txt -f "%e" \
+    docker exec method \
+    $ENTRYPOINT /data/${DATASET_ID}.h5 /outputs/${DATASET_ID}/
+done
+
+# stop the container
+docker stop method
+
+# then evaluate it using the dyneval docker
+docker run $DATA_MOUNT $GT_MOUNT $OUTPUT_MOUNT $WEIGHTS_MOUNT $DIFFICULTIES_MOUNT dynverse/tc-scorer:0.1
+
+# the overall score is present in ...
+cat $OUTPUT_FOLDER/AGGREGATED_SCORE
+
+# the scores on each dataset can be viewed in
+head $OUTPUT_FOLDER/dataset_scores.csv
+```
+
+## Exploring the output
+
+You can use the `dynverse/convertor` container to convert the output of
+a method to the format that [dynverse](https://dynverse.org)
+understands. This can be useful to visualize and inspect the output of a
+method in R. For example:
 
 ``` r
 # First time users should run this:
@@ -180,7 +244,7 @@ library(dyno, quietly = TRUE)
 
 ``` r
 # load in the model and groundtruth
-model <- dynutils::read_h5("results/model.h5")
+model <- dynutils::read_h5("examples/outputs/linear/model.h5")
 dataset <- dynutils::read_h5("examples/inputs/linear.h5")
 groundtruth <- dynutils::read_h5("examples/ground-truths/linear.h5")
 
@@ -211,46 +275,9 @@ patchwork::wrap_plots(
 
     ## Using milestone_percentages from trajectory
 
-![](description_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](description_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-## Evaluating on all datasets locally
-
-To build a sample TC submission from
-[containers/tc-submissions](containers/tc-submissions) folder do in root
-of this repo:
-
-    $ sudo docker build -t single-cell-submission \
-      -f tc-submissions/submission-python/code/Dockerfile \
-      tc-submissions/submission-python/code
-
-To run resulting submission against example inputs do:
-
-    $ sudo docker run -v $(pwd)/examples/inputs:/inputs \
-      -v $(pwd)/results/:/outputs single-cell-submission /inputs /outputs
-
-To build TC scorer do:
-
-    $ sudo docker build -t single-cell-scorer -f tc-scorer/Dockerfile \
-      tc-scorer
-
-To score results generated before do:
-
-    $ sudo docker run \
-      -v $(pwd)/results:/outputs \
-      -v $(pwd)/examples/inputs:/inputs \
-      -v $(pwd)/examples/ground-truths:/ground-truths \
-      -v $(pwd)/examples/
-      single-cell-scorer 10000
-
-where the last argument should be the overal runtime \[ms\] of solution
-on all datasets. The accuracy score will be decreased exponentially the
-longer this time is. If that argument is zero or not present, the
-aggregated score will be equal to the accuracy score.
-
-## Hints
-
-First hint: the hints won’t give necessarily a better result. They just
-reflect common current practices.
+## Additional information
 
 ### Normalization of datasets
 

@@ -1,8 +1,10 @@
+# download the datasets from ..... and put them inside the datasets/training/ folder
+
 # build the method container
-CONTAINER_FOLDER=containers/methods/python/
+CONTAINER_FOLDER=containers/tc-submissions/submission-python/code
 TAG=dynverse/python_example
 
-chmod +x $CONTAINER_FOLDER/main.R
+chmod +x $CONTAINER_FOLDER/main.py
 docker build -t $TAG $CONTAINER_FOLDER
 
 # create a folder to store the output and scores
@@ -13,6 +15,7 @@ mkdir $OUTPUT_FOLDER
 # define the folders where the data is stored
 DATA_FOLDER=$(pwd)/datasets/training/inputs
 GT_FOLDER=$(pwd)/datasets/training/ground-truths
+
 DATA_MOUNT="-v $DATA_FOLDER:/data/"
 GT_MOUNT="-v $GT_FOLDER:/ground-truths"
 WEIGHTS_MOUNT="-v $(pwd)/datasets/training/weights.csv:/weights.csv"
@@ -55,20 +58,8 @@ docker stop method
 # then evaluate it using the dyneval docker
 docker run $DATA_MOUNT $GT_MOUNT $OUTPUT_MOUNT $WEIGHTS_MOUNT $DIFFICULTIES_MOUNT dynverse/tc-scorer:0.1
 
+# the overall score is present in ...
+cat $OUTPUT_FOLDER/AGGREGATED_SCORE
 
-
-
-
-
-
-
-
-# Old code, should be integrated into the above
-# convert the output csv's into an HDF5 file that can be used for further processing (https://dynverse.org)
-# docker run $DATA_MOUNT $RESULT_MOUNT dynverse/convert_output --dataset /data/${DATASET_ID}.h5 --output_folder /ti/ --model /ti/model.h5
-# ls $RESULT_FOLDER
-#
-# # then evaluate it using the dyneval docker
-# docker run $DATA_MOUNT $GT_MOUNT $RESULT_MOUNT dynverse/dyneval --groundtruth /gt/${DATASET_ID}.h5 --model /ti/model.h5 --output_scores /ti/scores.json
-# cat $RESULT_FOLDER/scores.json
-
+# the scores on each dataset can be viewed in
+head $OUTPUT_FOLDER/dataset_scores.csv
