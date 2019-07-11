@@ -14,20 +14,20 @@ output_folder = sys.argv[2]
 
 # read in sparse matrix
 dataset_h5 = h5py.File(dataset_location)
-expression_h5 = dataset_h5["data"]["expression"]
-expression = scipy.sparse.csc_matrix((
-  expression_h5["x"][()],
-  expression_h5["i"][()],
-  expression_h5["p"][()]),
-  expression_h5["dims"][()]
+counts_h5 = dataset_h5["data"]["counts"]
+counts = scipy.sparse.csc_matrix((
+  counts_h5["x"][()],
+  counts_h5["i"][()],
+  counts_h5["p"][()]),
+  counts_h5["dims"][()]
 )
-cell_ids = expression_h5["rownames"][()].astype(str)
+cell_ids = counts_h5["rownames"][()].astype(str)
 
 # Infer a trajectory ------------------------------------------------------
 
 # do pca
 pca = sklearn.decomposition.TruncatedSVD()
-pca_transformed = pca.fit_transform(expression)
+pca_transformed = pca.fit_transform(counts)
 
 # select first principal component to construct a linear trajectory
 # the component is scaled between 0 and 1 to get to a "percentage"
