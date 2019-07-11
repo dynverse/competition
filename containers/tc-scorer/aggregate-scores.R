@@ -13,12 +13,16 @@ library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
 
 # for debugging
 # base <- "examples/"
-base <- ""
+
+source("/code/functions.R")
 
 output_folder <- paste0(base, "/outputs/")
 groundtruths_folder <- paste0(base, "/ground-truths/")
 difficulties_path <- paste0(base, "/difficulties.csv")
 weights_path <- paste0(base, "/weights.csv")
+
+args <- commandArgs(trailingOnly=TRUE)
+time <- as.integer(args[[1]])
 
 cat("> Reading scores \n")
 
@@ -34,18 +38,7 @@ weights <- read_csv(
 all_dataset_ids <- fs::dir_ls(groundtruths_folder) %>% fs::path_file() %>% fs::path_ext_remove()
 
 # load in the scores
-scores <- map_df(all_dataset_ids, function(dataset_id) {
-  scores_path <- fs::path(output_folder, dataset_id, "scores.json")
-
-  # load scores if available, otherwise return 0
-  if (fs::file_exists(scores_path)) {
-    scores <- jsonlite::read_json(scores_path)[[1]]
-    scores$dataset_id <- dataset_id
-    scores
-  } else {
-    list(dataset_id = dataset_id)
-  }
-}) %>%
+scores <- map_df(all_dataset_ids, process_scores, output_folder = output_folder) %>%
   gather(-dataset_id, key = "metric", value = "score")
 
 cat("\U2713 Reading scores \n")
@@ -54,7 +47,10 @@ cat("> Normalizing and aggregating scores \n")
 # normalize the scores by the difficulty
 scores <- scores %>%
   left_join(difficulties, c("dataset_id", "metric")) %>%
-  mutate(normalized = pnorm((score - mean)/sd)) %>%
+  mutate(normalized = case_when(
+    (metric == "time") ~ score,
+    TRUE ~ pnorm((score - mean)/sd)
+  )) %>%
   mutate(normalized = ifelse(is.na(normalized), 0, normalized))
 
 # aggregate across metrics
@@ -75,6 +71,7 @@ overall_score <- dataset_scores %>%
   pull(weighted_score) %>%
   sum()
 
+# add time score (assuming time is in seconds)
 write(overall_score, fs::path(output_folder, "AGGREGATED_SCORE"))
 
 cat("\U2713 Normalizing and aggregating scores \n")
