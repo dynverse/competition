@@ -9,10 +9,11 @@ process_scores <- function(dataset_id, output_folder) {
     time_path <- fs::path(output_folder, dataset_id, "time.txt")
     if (fs::file_exists(time_path)) {
       scores$time <- as.double(scan(time_path))
+      if (is.na(scores$time)) scores$time <- Inf
     } else {
       scores$time <- Inf
     }
-    scores$time <- process_time(time)
+    scores$time <- process_time(scores$time)
 
     scores
   } else {

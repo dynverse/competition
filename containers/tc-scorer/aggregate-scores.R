@@ -13,6 +13,7 @@ library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
 
 # for debugging
 # base <- "examples/"
+base <- ""
 
 source("/code/functions.R")
 
@@ -20,9 +21,6 @@ output_folder <- paste0(base, "/outputs/")
 groundtruths_folder <- paste0(base, "/ground-truths/")
 difficulties_path <- paste0(base, "/difficulties.csv")
 weights_path <- paste0(base, "/weights.csv")
-
-args <- commandArgs(trailingOnly=TRUE)
-time <- as.integer(args[[1]])
 
 cat("> Reading scores \n")
 
