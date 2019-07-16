@@ -43,19 +43,10 @@ docker build -t $TAG $FOLDER
 
 docker push $TAG
 
-## EVALUATION CONTAINER
-FOLDER="containers/evaluators/dyneval/"
-TAG="dynverse/dyneval"
-
-chmod +x $FOLDER/main.R
-docker build -t $TAG $FOLDER
-
-docker push $TAG
-
 ## TC-SCORER
 FOLDER="containers/tc-scorer/"
 TAG="dynverse/tc-scorer"
-VERSION=0.1
+VERSION=0.2
 
 chmod +x $FOLDER/main.R
 chmod +x $FOLDER/aggregate-scores.R

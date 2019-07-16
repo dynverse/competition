@@ -1,8 +1,9 @@
 #!/usr/local/bin/Rscript
 
 # assumes
-# - /difficulties.csv exists
-# - /ground-truths/... .h5 exists
+# - /data/difficulties.csv exists
+# - /data/weights.csv exists
+# - /data/ground-truths/... .h5 exists
 # - /outputs/.../scores.json exists
 
 library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
@@ -18,9 +19,9 @@ base <- ""
 source("/code/functions.R")
 
 output_folder <- paste0(base, "/outputs/")
-groundtruths_folder <- paste0(base, "/ground-truths/")
-difficulties_path <- paste0(base, "/difficulties.csv")
-weights_path <- paste0(base, "/weights.csv")
+groundtruths_folder <- paste0(base, "/data/ground-truths/")
+difficulties_path <- paste0(base, "/data/difficulties.csv")
+weights_path <- paste0(base, "/data/weights.csv")
 
 cat("> Reading scores \n")
 
