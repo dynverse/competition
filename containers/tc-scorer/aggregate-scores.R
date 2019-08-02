@@ -61,7 +61,14 @@ dataset_scores <- scores %>%
   group_by(dataset_id) %>%
   summarise(metric = "geometric_mean", score = geometric_mean(normalized))
 
-readr::write_csv(dataset_scores, fs::path(output_folder, "dataset_scores.csv"))
+# save the scores
+all_scores <- bind_rows(
+  scores,
+  dataset_scores
+)
+all_scores %>%
+  spread(metric, score, -dataset_id) %>%
+  readr::write_csv(fs::path(output_folder, "dataset_scores.csv"))
 
 # aggregate across datasets
 overall_score <- dataset_scores %>%
