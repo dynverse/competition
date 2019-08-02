@@ -3,11 +3,12 @@ mkdir examples
 
 # input
 
-mkdir examples/inputs/
-mkdir examples/ground-truths
+mkdir examples/data/
+mkdir examples/data/inputs/
+mkdir examples/data/ground-truths/
 
-INPUT_FOLDER=$(pwd)/examples/inputs/
-GT_FOLDER=$(pwd)/examples/ground-truths/
+INPUT_FOLDER=$(pwd)/examples/data/inputs/
+GT_FOLDER=$(pwd)/examples/data/ground-truths/
 MOUNT=/ti
 GT_MOUNT="-v $GT_FOLDER:/gt"
 
@@ -35,14 +36,14 @@ crossing(
 ) %>%
   mutate(score = runif(n())) %>%
   spread(type, score) %>%
-  write_csv("examples/difficulties.csv")
+  write_csv("examples/data/difficulties.csv")
 
 tibble(
   dataset_id = dataset_ids,
   weight = runif(length(dataset_ids))
 ) %>%
   mutate(weight = weight / sum(weight)) %>%
-  write_csv("examples/weights.csv")
+  write_csv("examples/data/weights.csv")
 EOF
 
 # output
@@ -50,10 +51,11 @@ mkdir examples/outputs/
 
 create_output() {
   mkdir $OUTPUT_FOLDER/$EXAMPLE_ID
-  docker run -v $INPUT_FOLDER/:$MOUNT_INPUT \
+  /usr/bin/time -o $OUTPUT_FOLDER/$EXAMPLE_ID/time.txt -f "%e" \
+    docker run -v $INPUT_FOLDER/:$MOUNT_INPUT \
     -v $OUTPUT_FOLDER/$EXAMPLE_ID/:$MOUNT_OUTPUT \
     -w $MOUNT \
-    dynverse/r_example \
+    dynverse/python_example \
     $MOUNT_INPUT/$EXAMPLE_ID.h5 $MOUNT_OUTPUT/
 }
 
@@ -64,17 +66,13 @@ MOUNT_OUTPUT=/output
 EXAMPLE_ID=linear create_output
 EXAMPLE_ID=bifurcating create_output
 EXAMPLE_ID=tree create_output
-EXAMPLE_ID=disc onnected create_output
+EXAMPLE_ID=disconnected create_output
 
-# scores
-docker run \
-  -v $(pwd)/examples/difficulties.csv:/difficulties.csv \
-  -v $(pwd)/examples/weights.csv:/weights.csv \
-  -v $(pwd)/examples/ground-truths:/ground-truths \
-  -v $(pwd)/examples/outputs:/outputs \
-  dynverse/tc-scorer:0.1 10000
+# scoring
+DATA_FOLDER=$(pwd)/examples/data/
+DATA_MOUNT="-v $DATA_FOLDER:/data/"
 
-# score aggregate
-docker run -v $(pwd)/examples:/ti \
-  -w /ti \
-  single-cell-scorer 10000
+OUTPUT_FOLDER=$(pwd)/examples/outputs/
+OUTPUT_MOUNT="-v $OUTPUT_FOLDER:/outputs/"
+
+docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.2
