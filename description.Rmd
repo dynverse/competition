@@ -23,6 +23,13 @@ library(readr)
 library(dynplot2)
 library(ggplot2)
 library(dynwrap)
+
+theme <- theme(
+  panel.border = element_rect(colour = "black", fill=NA, size=1, color = "#999999"),
+  legend.position = "none",
+  plot.caption = element_text(hjust = 0.5, size = 11),
+  plot.title = element_text(hjust = 0.5)
+)
 ```
 
 ```{r, echo = FALSE}
@@ -80,12 +87,6 @@ set.seed(1)
 dataset <- dynplot2::example_bifurcating %>% 
   add_dimred(dyndimred::dimred_landmark_mds)
 
-theme <- theme(
-  panel.border = element_rect(colour = "black", fill=NA, size=1, color = "#999999"),
-  legend.position = "none",
-  plot.caption = element_text(hjust = 0.5, size = 11)
-)
-
 plot_dataset <- dataset %>% 
   dynplot() +
   geom_cell_point() +
@@ -132,7 +133,7 @@ patchwork::wrap_plots(plot_trajectories)
 
 ## Problem description
 
-You are given the expression of thousands of genes within thousands of cells. This expression is given both in raw format (counts matrix) as in a normalized format (expression matrix). The goal is to construct a topology that represents these cells, and to place these cells on the correct locations along this topology.
+You are given the expression of thousands of genes within thousands of cells. This expression is given as a counts matrix, indicating how often a particular gene was counted within a cell. The goal is to construct a topology that represents these cells, and to place these cells on the correct locations along this topology.
 
 ![](docs/img/input_output.png)
 
@@ -165,25 +166,76 @@ You have to write a docker container that will read in the input files and write
 # read_lines(paste0(examples %>% filter(language == "Python") %>% pull(folder), "/Dockerfile")) %>% c("```python", ., "```") %>% paste0(collapse = "\n") %>% knitr::asis_output()
 ```
 
-The input file is an HDF5 file, which contains two matrices: the counts (`/data/counts`) and expression (`/data/expression`). These matrices contain the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples inputs folder](examples/inputs) (_dataset.h5_).
+The input file is an HDF5 file, which contains a matrix: the counts (`/data/counts`). This matrix contains the expression of genes (columns) within hundreds to millions of cells (rows). Example HDF5 files are present in the [examples inputs folder](examples/inputs) (_dataset.h5_).
 
-Because the data is very sparse, the matrices are stored inside a sparse format: [Compressed sparse column format (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#L{input_line})")) %>% pull(link_input) %>% label_sentence()` . This format stores three sparse array, _i_, _p_ and _x_. _x_ contains the actual values, _i_ contains the row index for each value, and _p_ contains which of the elements of _i_ and _x_ are in each column (i.e. _p_<sub><i>j</i></sub> until _p_<sub><i>j+1</i></sub> are the values from _x_ and _i_ that are in column _j_). We also provide the _rownames_, that correspond to cell identifiers, and the _dims_, the dimensions of the matrix.
+Because the data is very sparse, the matrix is stored inside a sparse format: [Compressed sparse column format (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html). We provided an example to read in these matrices for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#L{input_line})")) %>% pull(link_input) %>% label_sentence()` . This format stores three sparse array, _i_, _p_ and _x_. _x_ contains the actual values, _i_ contains the row index for each value, and _p_ contains which of the elements of _i_ and _x_ are in each column (i.e. _p_<sub><i>j</i></sub> until _p_<sub><i>j+1</i></sub> are the values from _x_ and _i_ that are in column _j_). We also provide the _rownames_, that correspond to cell identifiers, and the _dims_, the dimensions of the matrix.
 
-As output you have to provide two files. The _milestone\_network.csv_ is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The _progressions.csv_ contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples outputs folder](examples/outputs) (_progressions.csv_ and _milestone\_network.csv_).
+As output you have to provide two comma separated files. The _milestone\_network.csv_ is a table containing how milestones are connected (_from_ and _to_) and the lengths of these connections (_length_). The _progressions.csv_ contains for each cell (_cell\_id_) where it is located along this topology (_from_, _to_ and _percentage_ ∈ [0, 1]). Both outputs have to be saved as a comma separated file without an index but with header. Example csv files are present in the [examples outputs folder](examples/outputs) (_progressions.csv_ and _milestone\_network.csv_):
+
+Example _milestone\_network.csv_:
+```{r, echo = FALSE, message=FALSE}
+readr::read_csv("examples/outputs/bifurcating/milestone_network.csv") %>% knitr::kable()
+```
+
+Example _progressions.csv_ (first 10 rows):
+
+```{r, echo = FALSE, message=FALSE}
+readr::read_csv("examples/outputs/bifurcating/progressions.csv") %>% head(10) %>% knitr::kable()
+```
 
 We provided an example to save these two objects for `r examples %>% mutate(link_input = str_glue("[{language}]({main}#L{output_line})")) %>% pull(link_input) %>% label_sentence()`
 
 ## Evaluation
 
-Your output will be compared to the known (or expected) trajectory within both synthetic and real datasets. This is done using five metrics, each contributing (on average) 1/5th to the overall score.
+Your output will be compared to the known (or expected) trajectory within both synthetic and real datasets. This is done using four metrics, each contributing (on average) 1/4th to the overall score.
 
-- Similarity between the topology
-- Similarity between the position of cells on particular branches
+- Similarity between the topology. This will calculate a distance measures between two topologies. The score ignores and "inbetween" milestones, i.e. those with degree 2. It therefore does not matter whether you return a trajectory as a network A->B->C versus A->B. The order of the edges also doesn't matter.
+
+```{r, echo = FALSE, fig.width=10, fig.height = 4}
+library(dynplot2)
+datasets <- list(
+  bifurcating = example_bifurcating,
+  bifurcating2 = example_bifurcating %>% 
+    {
+      .$milestone_network$length[[1]] <- .$milestone_network$length[[1]]/2
+      .$milestone_network <- bind_rows(.$milestone_network, tibble(from = "M4", to = "E", length = .$milestone_network$length[[1]], directed = TRUE))
+      .$milestone_ids <- c(.$milestone_ids, "E")
+      .$id <- paste0(.$id, "A")
+      .
+    },
+  linear = example_linear,
+  tree = example_tree,
+  disconnected = example_disconnected
+)
+gs <- datasets$bifurcating
+
+map(datasets, function(dataset) {
+  plot <- dynplot(dataset, layout = layout_graph(dataset)) +
+    geom_trajectory_segments(arrow = NULL) +
+    geom_milestone_point(size = 2) +
+    theme
+  
+  if (gs$id == dataset$id) {
+    plot <- plot + ggtitle("Ground truth")
+  } else {
+    plot <- plot + ggtitle(paste0("Topology score (HIM): \n", round(dyneval::calculate_metrics(dataset, gs, "him")$him, 2)))
+  }
+}) %>% patchwork::wrap_plots(nrow = 1)
+```
+
+```{r}
+network1 <- datasets$bifurcating %>% simplify_trajectory() %>% .$milestone_network
+network2 <- datasets$bifurcating2 %>% simplify_trajectory() %>% .$milestone_network
+
+dyneval::calculate_him(network1, network2)
+```
+
+
+- Similarity between the assignment of cells to particular branches
 - Similarity between the relative positions of cells within the trajectory
-- Similarity between features that change along the trajectory
-- Running time: The average running time in seconds, through a log transformation, and scaled so that ⩽ 1 second has score 1, and ⩾ 1 hour has score 0.
+- Running time: The average running time in seconds, through a log transformation, and scaled so that ⩽ 1 second has score 1, and ⩾ 3 minutes has score 0.
 
-The first four metrics are aggregated for each dataset using a geometric mean. That means that low values (i.e. close to zero) for any of the metrics results in a low score overall. They are weighted so that:
+The metrics are aggregated for each dataset using a geometric mean. That means that low values (i.e. close to zero) for any of the metrics results in a low score overall. They are weighted so that:
 
 - A slight difference in performance for more difficult datasets is more important than an equally slight difference for an easy dataset
 - Datasets with a more rare trajectory type (e.g. tree) are given relatively more weight than frequent topologies (e.g. linear)
@@ -198,7 +250,7 @@ readr::read_file("scripts/example.sh") %>%
   knitr::asis_output()
 ```
 
-## Exploring the output
+## Visualizing a trajectory
 
 You can use the `dynverse/convertor` container to convert the output of a method to the format that [dynverse](https://dynverse.org) understands. This can be useful to visualize and inspect the output of a method in R. For example:
 
@@ -206,7 +258,7 @@ You can use the `dynverse/convertor` container to convert the output of a method
 set.seed(1)
 ```
 
-```{r}
+```{r, message = FALSE}
 # First time users should run this:
 # install.packages("devtools")
 # devtools::install_github("dynverse/dyno")

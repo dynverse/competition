@@ -37,8 +37,8 @@ circular) to very complex (trees or disconnected graphs).
 ## Problem description
 
 You are given the expression of thousands of genes within thousands of
-cells. This expression is given both in raw format (counts matrix) as in
-a normalized format (expression matrix). The goal is to construct a
+cells. This expression is given as a counts matrix, indicating how often
+a particular gene was counted within a cell. The goal is to construct a
 topology that represents these cells, and to place these cells on the
 correct locations along this topology.
 
@@ -83,13 +83,12 @@ entrypoints) are provided for
 Make sure to specify the entrypoint using the JSON notation as is shown
 in the examples.
 
-The input file is an HDF5 file, which contains two matrices: the counts
-(`/data/counts`) and expression (`/data/expression`). These matrices
-contain the expression of genes (columns) within hundreds to millions of
-cells (rows). Example HDF5 files are present in the [examples inputs
-folder](examples/inputs) (*dataset.h5*).
+The input file is an HDF5 file, which contains a matrix: the counts
+(`/data/counts`). This matrix contains the expression of genes (columns)
+within hundreds to millions of cells (rows). Example HDF5 files are
+present in the [examples inputs folder](examples/inputs) (*dataset.h5*).
 
-Because the data is very sparse, the matrices are stored inside a sparse
+Because the data is very sparse, the matrix is stored inside a sparse
 format: [Compressed sparse column format
 (CSC)](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html).
 We provided an example to read in these matrices for
@@ -105,15 +104,36 @@ from *x* and *i* that are in column *j*). We also provide the
 *rownames*, that correspond to cell identifiers, and the *dims*, the
 dimensions of the matrix.
 
-As output you have to provide two files. The *milestone\_network.csv* is
-a table containing how milestones are connected (*from* and *to*) and
-the lengths of these connections (*length*). The *progressions.csv*
-contains for each cell (*cell\_id*) where it is located along this
-topology (*from*, *to* and *percentage* ∈ \[0, 1\]). Both outputs have
-to be saved as a comma separated file without an index but with header.
-Example csv files are present in the [examples outputs
-folder](examples/outputs) (*progressions.csv* and
-*milestone\_network.csv*).
+As output you have to provide two comma separated files. The
+*milestone\_network.csv* is a table containing how milestones are
+connected (*from* and *to*) and the lengths of these connections
+(*length*). The *progressions.csv* contains for each cell (*cell\_id*)
+where it is located along this topology (*from*, *to* and *percentage* ∈
+\[0, 1\]). Both outputs have to be saved as a comma separated file
+without an index but with header. Example csv files are present in the
+[examples outputs folder](examples/outputs) (*progressions.csv* and
+*milestone\_network.csv*):
+
+Example *milestone\_network.csv*:
+
+| from | to | length |
+| :--- | :- | -----: |
+| A    | B  |      1 |
+
+Example *progressions.csv* (first 10 rows):
+
+| from | to | cell\_id | percentage |
+| :--- | :- | :------- | ---------: |
+| A    | B  | C1       |  0.0519400 |
+| A    | B  | C2       |  0.1884765 |
+| A    | B  | C3       |  0.3843030 |
+| A    | B  | C4       |  0.6263723 |
+| A    | B  | C5       |  0.4427225 |
+| A    | B  | C6       |  0.0969609 |
+| A    | B  | C7       |  0.4341350 |
+| A    | B  | C8       |  0.3389492 |
+| A    | B  | C9       |  0.7250523 |
+| A    | B  | C10      |  0.1588718 |
 
 We provided an example to save these two objects for
 [R](containers/tc-submissions/submission-r/code/main.R#L51),
@@ -124,21 +144,38 @@ We provided an example to save these two objects for
 ## Evaluation
 
 Your output will be compared to the known (or expected) trajectory
-within both synthetic and real datasets. This is done using five
-metrics, each contributing (on average) 1/5th to the overall score.
+within both synthetic and real datasets. This is done using four
+metrics, each contributing (on average) 1/4th to the overall score.
 
-  - Similarity between the topology
-  - Similarity between the position of cells on particular branches
+  - Similarity between the topology. This will calculate a distance
+    measures between two topologies. The score ignores and “inbetween”
+    milestones, i.e. those with degree 2. It therefore does not matter
+    whether you return a trajectory as a network A-\>B-\>C versus A-\>B.
+    The order of the edges also doesn’t
+matter.
+
+![](description_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+network1 <- datasets$bifurcating %>% simplify_trajectory() %>% .$milestone_network
+network2 <- datasets$bifurcating2 %>% simplify_trajectory() %>% .$milestone_network
+
+dyneval::calculate_him(network1, network2)
+```
+
+    ##       HIM 
+    ## 0.9233855
+
+  - Similarity between the assignment of cells to particular branches
   - Similarity between the relative positions of cells within the
     trajectory
-  - Similarity between features that change along the trajectory
   - Running time: The average running time in seconds, through a log
-    transformation, and scaled so that ⩽ 1 second has score 1, and ⩾ 1
-    hour has score 0.
+    transformation, and scaled so that ⩽ 1 second has score 1, and ⩾ 3
+    minutes has score 0.
 
-The first four metrics are aggregated for each dataset using a geometric
-mean. That means that low values (i.e. close to zero) for any of the
-metrics results in a low score overall. They are weighted so that:
+The metrics are aggregated for each dataset using a geometric mean. That
+means that low values (i.e. close to zero) for any of the metrics
+results in a low score overall. They are weighted so that:
 
   - A slight difference in performance for more difficult datasets is
     more important than an equally slight difference for an easy dataset
@@ -155,10 +192,10 @@ You can run a method and the evaluation locally using the script
 
 # build the method container
 CONTAINER_FOLDER=containers/tc-submissions/submission-python/code
-TAG=dynverse/python_example
+IMAGE=dynverse/python_example
 
 chmod +x $CONTAINER_FOLDER/main.py
-docker build -t $TAG $CONTAINER_FOLDER
+docker build -t $IMAGE $CONTAINER_FOLDER
 
 # create a folder to store the output and scores
 OUTPUT_FOLDER=$(pwd)/results
@@ -166,50 +203,25 @@ OUTPUT_MOUNT="-v $OUTPUT_FOLDER:/outputs/"
 mkdir $OUTPUT_FOLDER
 
 # define the folders where the data is stored
-DATA_FOLDER=$(pwd)/datasets/training/inputs
-GT_FOLDER=$(pwd)/datasets/training/ground-truths
-
+DATA_FOLDER=$(pwd)/datasets/training/
 DATA_MOUNT="-v $DATA_FOLDER:/data/"
-GT_MOUNT="-v $GT_FOLDER:/ground-truths"
-WEIGHTS_MOUNT="-v $(pwd)/datasets/training/weights.csv:/weights.csv"
-DIFFICULTIES_MOUNT="-v $(pwd)/datasets/training/difficulties.csv:/difficulties.csv"
 
 # run on one dataset ------------------------------------------------------------------
+# this uses the default entrypoint
 DATASET_ID=real-gold-aging-hsc-old_kowalczyk
 
 mkdir $OUTPUT_FOLDER/$DATASET_ID
 /usr/bin/time -o $OUTPUT_FOLDER/$DATASET_ID/time.txt -f "%e" \
-  docker run $DATA_MOUNT $OUTPUT_MOUNT $TAG \
-  /data/${DATASET_ID}.h5 /outputs/${DATASET_ID}/
+  docker run $DATA_MOUNT $OUTPUT_MOUNT $IMAGE \
+  /data/inputs/${DATASET_ID}.h5 /outputs/${DATASET_ID}/
 ls $OUTPUT_FOLDER/$DATASET_ID
 
 # run on many datasets ----------------------------------------------------------------
-GT_LOCATIONS=($GT_FOLDER/*.h5)
-
-ENTRYPOINT=$(docker inspect --format='{{join .Config.Entrypoint " "}}' $TAG)
-
-# start the container
-docker stop method && docker rm method
-docker run --name method --entrypoint bash --rm -d -i -t $DATA_MOUNT $OUTPUT_MOUNT $TAG
-
-# loop over every dataset (as an example we only do it for the first 10 here)
-# we remove (potential) previous output and time the execution
-for GT_LOCATION in ${GT_LOCATIONS[@]:1:10}; do
-  DATASET_ID=$(basename -s .h5 $GT_LOCATION)
-  echo $DATASET_ID
-  DATASET_OUTPUT_FOLDER=$OUTPUT_FOLDER/$DATASET_ID/
-  mkdir -p $DATASET_OUTPUT_FOLDER
-  rm -rf $DATASET_OUTPUT_FOLDER/*
-  /usr/bin/time -o $DATASET_OUTPUT_FOLDER/time.txt -f "%e" \
-    docker exec method \
-    $ENTRYPOINT /data/${DATASET_ID}.h5 /outputs/${DATASET_ID}/
-done
-
-# stop the container
-docker stop method
+# this uses the runner script (scripts/runner.sh)
+sh scripts/runner.sh $DATA_FOLDER $OUTPUT_FOLDER $IMAGE
 
 # then evaluate it using the dyneval docker
-docker run $DATA_MOUNT $GT_MOUNT $OUTPUT_MOUNT $WEIGHTS_MOUNT $DIFFICULTIES_MOUNT dynverse/tc-scorer:0.1
+docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.2
 
 # the overall score is present in ...
 cat $OUTPUT_FOLDER/AGGREGATED_SCORE
@@ -218,7 +230,7 @@ cat $OUTPUT_FOLDER/AGGREGATED_SCORE
 head $OUTPUT_FOLDER/dataset_scores.csv
 ```
 
-## Exploring the output
+## Visualizing a trajectory
 
 You can use the `dynverse/convertor` container to convert the output of
 a method to the format that [dynverse](https://dynverse.org)
@@ -231,18 +243,7 @@ method in R. For example:
 # devtools::install_github("dynverse/dyno")
 
 library(dyno, quietly = TRUE)
-```
 
-    ## 
-    ## Attaching package: 'dynplot'
-
-    ## The following objects are masked from 'package:dynplot2':
-    ## 
-    ##     empty_plot, example_bifurcating, example_disconnected,
-    ##     example_linear, example_tree, get_milestone_palette_names,
-    ##     theme_clean, theme_graph
-
-``` r
 # load in the model and groundtruth
 model <- dynutils::read_h5("examples/outputs/linear/model.h5")
 dataset <- dynutils::read_h5("examples/inputs/linear.h5")
@@ -263,19 +264,7 @@ patchwork::wrap_plots(
 )
 ```
 
-    ## Coloring by milestone
-
-    ## Using milestone_percentages from trajectory
-
-    ## Coloring by milestone
-
-    ## Using milestone_percentages from trajectory
-
-    ## Coloring by milestone
-
-    ## Using milestone_percentages from trajectory
-
-![](description_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](description_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ## Additional information
 
