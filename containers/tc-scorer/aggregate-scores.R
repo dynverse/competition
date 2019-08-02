@@ -63,11 +63,11 @@ dataset_scores <- scores %>%
 
 # save the scores
 all_scores <- bind_rows(
-  scores,
+  scores %>% select(dataset_id, metric, score),
   dataset_scores
 )
 all_scores %>%
-  spread(metric, score, -dataset_id) %>%
+  spread(metric, score) %>%
   readr::write_csv(fs::path(output_folder, "dataset_scores.csv"))
 
 # aggregate across datasets
