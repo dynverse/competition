@@ -75,4 +75,4 @@ DATA_MOUNT="-v $DATA_FOLDER:/data/"
 OUTPUT_FOLDER=$(pwd)/examples/outputs/
 OUTPUT_MOUNT="-v $OUTPUT_FOLDER:/outputs/"
 
-docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.2
+docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.3

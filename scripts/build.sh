@@ -46,7 +46,7 @@ docker push $TAG
 ## TC-SCORER
 FOLDER="containers/tc-scorer/"
 TAG="dynverse/tc-scorer"
-VERSION=0.2
+VERSION=0.3
 
 chmod +x $FOLDER/main.R
 chmod +x $FOLDER/aggregate-scores.R

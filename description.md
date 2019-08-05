@@ -221,7 +221,7 @@ ls $OUTPUT_FOLDER/$DATASET_ID
 sh scripts/runner.sh $DATA_FOLDER $OUTPUT_FOLDER $IMAGE
 
 # then evaluate it using the dyneval docker
-docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.2
+docker run $DATA_MOUNT $OUTPUT_MOUNT dynverse/tc-scorer:0.3
 
 # the overall score is present in ...
 cat $OUTPUT_FOLDER/AGGREGATED_SCORE
