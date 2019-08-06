@@ -56,8 +56,7 @@ docker push $TAG:$VERSION
 
 
 ## SUBMISSIONS
-zip -r containers/tc-submissions/submission-r.zip containers/tc-submissions/submission-r/
-zip -r containers/tc-submissions/submission-python.zip containers/tc-submissions/submission-python/
-zip -r containers/tc-submissions/submission-scala-spark.zip containers/tc-submissions/submission-scala-spark/
-zip -r containers/tc-submissions/submission-julia.zip containers/tc-submissions/submission-julia/
-
+pushd containers/tc-submissions/submission-python/ && zip -r ../submission-python.zip code && popd
+pushd containers/tc-submissions/submission-scala-spark/ && zip -r ../submission-scala-spark.zip code && popd
+pushd containers/tc-submissions/submission-julia/ && zip -r ../submission-julia.zip code && popd
+pushd containers/tc-submissions/submission-r/ && zip -r ../submission-r.zip code && popd
