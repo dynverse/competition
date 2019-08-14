@@ -122,18 +122,18 @@ Example *milestone\_network.csv*:
 
 Example *progressions.csv* (first 10 rows):
 
-| from | to | cell\_id | percentage |
-| :--- | :- | :------- | ---------: |
-| A    | B  | C1       |  0.0519400 |
-| A    | B  | C2       |  0.1884765 |
-| A    | B  | C3       |  0.3843030 |
-| A    | B  | C4       |  0.6263723 |
-| A    | B  | C5       |  0.4427225 |
-| A    | B  | C6       |  0.0969609 |
-| A    | B  | C7       |  0.4341350 |
-| A    | B  | C8       |  0.3389492 |
-| A    | B  | C9       |  0.7250523 |
-| A    | B  | C10      |  0.1588718 |
+| cell\_id | percentage | from | to |
+| :------- | ---------: | :--- | :- |
+| C1       |  0.2304303 | A    | B  |
+| C2       |  0.1537403 | A    | B  |
+| C3       |  0.9627531 | A    | B  |
+| C4       |  0.0811708 | A    | B  |
+| C5       |  0.2478125 | A    | B  |
+| C6       |  0.3013250 | A    | B  |
+| C7       |  0.2876437 | A    | B  |
+| C8       |  0.1923322 | A    | B  |
+| C9       |  0.1827381 | A    | B  |
+| C10      |  0.1598463 | A    | B  |
 
 We provided an example to save these two objects for
 [R](containers/tc-submissions/submission-r/code/main.R#L51),
@@ -167,15 +167,62 @@ dyneval::calculate_him(network1, network2)
     ## 0.9233855
 
   - Similarity between the assignment of cells to particular branches
+
+A branch is defined as a set of edges with no branching points,
+i.e. just a linear progression from one milestone to another milestone.
+This metric checks whether each branch with the gold standard can be
+mapped to a similar branch in the predicted trajectory, and vice versa.
+It does this by first calculating the number of overlapping cells
+between each pair of branches using a Jaccard
+score:
+
+![](https://latex.codecogs.com/gif.latex?%5Ctextrm%7BJaccard%7D\(c,%20c%27\)%20=%20%5Cfrac%7B%7Cc%20%5Ccap%20c%27%7C%7D%7B%7Cc%20%5Ccup%20c%27%7C%7D)
+
+It then calculates two scores. The Recovery assesses how well each
+branch within the gold standard has a similar branch in the
+prediction:
+
+![](https://latex.codecogs.com/gif.latex?%5Ctextrm%7BRecovery%7D%20=%20%5Cfrac%7B1%7D%7B%7CC%7C%7D%20%5Csum_%7Bc%20%5Cin%20C%7D%7B%5Cmax_%7Bc'%20%5Cin%20C'%7D%7B%5Ctextrm%7BJaccard\(c,%20c'\)%7D%7D%7D)
+
+The Relevance assesses how well each branch within the prediction has a
+similar branch in the gold
+standard:
+
+![](https://latex.codecogs.com/gif.latex?%5Ctextrm%7BRelevance%7D%20=%20%5Cfrac%7B1%7D%7B%7CC'%7C%7D%20%5Csum_%7Bc'%20%5Cin%20C'%7D%7B%5Cmax_%7Bc%20%5Cin%20C%7D%7B%5Ctextrm%7BJaccard\(c,%20c'\)%7D%7D%7D)
+
+The final score (F1<sub>branches</sub>) is then the harmonic mean
+between the Recovery and Relevance. A harmonic mean is used here to make
+sure that both the Relevance and Recovery are high. If either scores are
+low, the harmonic mean will also be low (in the worst case, zero).
+
   - Similarity between the relative positions of cells within the
     trajectory
-  - Running time: The average running time in seconds, through a log
-    transformation, and scaled so that ⩽ 1 second has score 1, and ⩾ 3
-    minutes has score 0.
+
+To determine whether cells have similar positions in the trajectory, we
+first calculate the geodesic distances between every pair of cells. The
+geodesic distance is defined as the shortest distance between two cells
+by following the edges within the trajectories. The lengths of the edges
+are taken into account in this calculation, but not the direction. This
+distance is illustrated in the following figure:
+
+![](docs/img/correlation.png)
+
+If a cell has a similar position in both the ground truth trajectory as
+in a predicted trajectory, it’s distance should also be relatively
+similar to other cells. To calculate the similarity between the relative
+positions of cells, we therefore calculate the spearman correlation
+between all pairwise geodesic distances. Because we calculate a
+correlation, the absolute magnitude in the geodesic distances doesn’t
+matter, but rather the distance relative to all other distances.
+
+  - Running time
+
+The average running time in seconds, through a log transformation, and
+scaled so that ⩽ 1 second has score 1, and ⩾ 3 minutes has score 0.
 
 The metrics are aggregated for each dataset using a geometric mean. That
 means that low values (i.e. close to zero) for any of the metrics
-results in a low score overall. They are weighted so that:
+results in a low score overall. They are also weighted so that:
 
   - A slight difference in performance for more difficult datasets is
     more important than an equally slight difference for an easy dataset
@@ -191,7 +238,7 @@ You can run a method and the evaluation locally using the script
 # download the datasets from ..... and put them inside the datasets/training/ folder
 
 # build the method container
-CONTAINER_FOLDER=containers/tc-submissions/submission-python/code
+CONTAINER_FOLDER=containers/tc-submissions/submission-r/code
 IMAGE=dynverse/python_example
 
 chmod +x $CONTAINER_FOLDER/main.py
@@ -229,42 +276,6 @@ cat $OUTPUT_FOLDER/AGGREGATED_SCORE
 # the scores on each dataset can be viewed in
 head $OUTPUT_FOLDER/dataset_scores.csv
 ```
-
-## Visualizing a trajectory
-
-You can use the `dynverse/convertor` container to convert the output of
-a method to the format that [dynverse](https://dynverse.org)
-understands. This can be useful to visualize and inspect the output of a
-method in R. For example:
-
-``` r
-# First time users should run this:
-# install.packages("devtools")
-# devtools::install_github("dynverse/dyno")
-
-library(dyno, quietly = TRUE)
-
-# load in the model and groundtruth
-model <- dynutils::read_h5("examples/outputs/linear/model.h5")
-dataset <- dynutils::read_h5("examples/inputs/linear.h5")
-groundtruth <- dynutils::read_h5("examples/ground-truths/linear.h5")
-
-# add a dimensionality reduction to the ground truth using landmark MDS
-groundtruth <- groundtruth %>% add_dimred(dyndimred::dimred_landmark_mds)
-dimred <- groundtruth$dimred
-
-# also infer a trajectory using one of the current state-of-the-art methods, e.g. slingshot
-model2 <- infer_trajectory(groundtruth, dynmethods::ti_slingshot())
-
-# plot both the groundtruth and model
-patchwork::wrap_plots(
-  dynplot::plot_dimred(groundtruth, dimred = dimred) + ggtitle("Ground truth"),
-  dynplot::plot_dimred(model, dimred = dimred) + ggtitle("Model from your method"),
-  dynplot::plot_dimred(model2, dimred = dimred) + ggtitle("Model of slingshot")
-)
-```
-
-![](description_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ## Additional information
 
