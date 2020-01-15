@@ -12,6 +12,8 @@ RUN apt-get update && \
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && \
   sudo apt-get install -y nodejs
 
+RUN R -e 'devtools::install_cran("prettyunits")'
+
 RUN R -e 'devtools::install_github("dynverse/dyneval@devel", dep = T)'
 
 COPY . .

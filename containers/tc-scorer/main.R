@@ -14,7 +14,8 @@ parser <-
   add_option("--groundtruth", type = "character", help = "Filename of the groundtruth, example: $MOUNT/dataset.h5", default = "/ti/groundtruth.h5") %>%
   add_option("--output", type = "character", help = "Filename of the model, or the folder that contains the milestone_network and progressions.", default = "/outputs")  %>%
   add_option("--output_scores", type = "character", help = "Filename of the scores, example: $MOUNT/dataset.(h5|loom). Will be a json file containing the scores.", default = "/ti/scores.json") %>%
-  add_option("--metrics", type = "character", help = "Which metrics to calculate, example: correlation,him,F1_milestones,featureimp_wcor", default = "correlation,him,F1_branches")
+  add_option("--metrics", type = "character", help = "Which metrics to calculate, example: correlation,him,F1_milestones,featureimp_wcor", default = "correlation,him,F1_branches") %>%
+  add_option("--waypoints", type = "integer", help = "Number of waypoints to take if necessary for a score", default = 100L)
 
 parsed_args <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
 
@@ -64,6 +65,15 @@ if (fs::is_file(parsed_args$output)) {
     )
   )
 
+  set.seed(1)
+
+  n_cells <- length(unique(progressions$cell_id))
+  if(parsed_args$waypoints == -1) {
+    parsed_args$waypoints <- n_cells
+  } else {
+    parsed_args$waypoints <- min(parsed_args$waypoints, n_cells)
+  }
+
   # construct the dynwrap trajectory object
   output <- wrap_data(
     cell_ids = unique(progressions$cell_id)
@@ -72,7 +82,7 @@ if (fs::is_file(parsed_args$output)) {
       milestone_network = milestone_network,
       progressions = progressions
     ) %>%
-    add_cell_waypoints()
+    add_cell_waypoints(num_cells_selected = parsed_args$waypoints)
 }
 
 cat("\U2713 Processing output \n")
